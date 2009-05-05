@@ -1,0 +1,23 @@
+                                 VLFeat Python extensions
+		       Mikael Rousson (mikael@polarrose.com)
+
+DESCRIPTION
+  - wrappers: c++ python wrappers of vl_erfill, vl_mser and vl_sift
+  - vlfeat: python code for test and display
+   
+COMPILING
+  The following instructions are specific for Ubuntu but it should be similar on 
+  other LINUX distributions and probably on MAC OS.
+  The c++ wrappers need boost python to be installed
+  > sudo apt-get install boost-python1.35-dev
+  > cd wrappers && make install 
+  
+TESTING
+  To run the python tests, you need to have numpy, pylab and PIL installed:
+  > sudo apt-get install python-numpy
+  > sudo apt-get install python-matplotlib
+  > sudo apt-get install python-imaging
+  Once these packages installed, you should be able to run the test:
+  > cd vlfeat
+  > python vlfeat.py
+  (make sure you have the image box.pgm in vlfeat/data dir)

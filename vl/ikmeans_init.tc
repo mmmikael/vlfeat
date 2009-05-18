@@ -53,7 +53,7 @@ static void alloc (VlIKMFilt *f, int M, int K)
   if (f-> centers) vl_free (f-> centers) ;
   f-> K = K ;
   f-> M = M ;  
-  f-> centers = vl_malloc (sizeof(vl_ikm_acc) * M * K) ;
+  f-> centers = (vl_ikm_acc*) vl_malloc (sizeof(vl_ikm_acc) * M * K) ;
 }
 
 

@@ -147,7 +147,7 @@ VL_IMCONVCOLTRI (FLT* dst, int dst_stride,
   vl_bool zeropad = (flags & VL_PAD_MASK) == VL_PAD_BY_ZERO ;
 #define fa ((double)(filt_size))
   FLT scale = ((FLT) (1.0/(fa*fa))) ;
-  FLT * buff = vl_malloc(sizeof(FLT) * (src_height + filt_size)) ;
+  FLT * buff = (FLT*) vl_malloc(sizeof(FLT) * (src_height + filt_size)) ;
   buff += filt_size ;
 
   while (x < src_width) {

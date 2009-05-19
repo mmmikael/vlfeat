@@ -1,81 +1,112 @@
-import Image
+import _vlfeat
 import numpy
-import pylab
-import _vlfeat as vlfeat
-from plotop import vl_plotframe
 
-def mser_test(fileName):
-	""" Simple mser test. Tests vlfeat.vl_mser and vlfeat.vl_erfill.
+def vl_sift(
+		data, 
+		frames=numpy.zeros(1), 
+		octaves=-1, 
+		levels=-1, 
+		first_octave=-1,
+		peak_thresh=-1.0, 
+		edge_thresh=-1.0,
+		norm_thresh=-1.0,
+		magnif=-1.0,
+		orientations=False,
+		verbose=0):
+	""" Computes the SIFT frames [1] (keypoints) F of the image I. I is a 
+	gray-scale image in single precision. Each column of F is a feature frame 
+	and has the format [X;Y;S;TH], where X,Y is the (fractional) center of the 
+	frame, S is the scale and TH is the orientation (in radians). 
+	Computes the SIFT descriptors [1] as well. Each column of D is the 
+	descriptor of the corresponding frame in F. A descriptor is a 
+	128-dimensional vector of class UINT8. 
+	
+	@param data         A gray-scale image in single precision 
+	                    (float numpy array).
+	@param frames       Set the frames to use (bypass the detector). If frames 
+	                    are not passed in order of increasing scale, they are 
+	                    re-orderded. 
+	@param octaves      Set the number of octave of the DoG scale space. 
+	@param levels       Set the number of levels per octave of the DoG scale 
+	                    space. The default value is 3.
+	@param first_octave Set the index of the first octave of the DoG scale 
+	                    space. The default value is 0.
+	@param peak_thresh  Set the peak selection threshold. 
+	                    The default value is 0. 
+	@param edge_thresh  Set the non-edge selection threshold. 
+	                    The default value is 10.
+	@param norm_thresh  Set the minimum l2-norm of the descriptor before 
+	                    normalization. Descriptors below the threshold are set 
+	                    to zero.
+	@param magnif       Set the descriptor magnification factor. The scale of 
+	                    the keypoint is multiplied by this factor to obtain the
+	                    width (in pixels) of the spatial bins. For instance, if
+	                    there are there are 4 spatial bins along each spatial
+	                    direction, the ``diameter'' of the descriptor is
+	                    approximatively 4 * MAGNIF. The default value is 3.
+	@param orientations Compute the orientantions of the frames overriding the 
+	                    orientation specified by the 'Frames' option.
+	@param verbose      Be verbose (may be repeated to increase the verbosity
+	                    level). 
 	"""
-	# load image and convert to grayscale 
-	ic = Image.open(fileName)
-	image = ic.convert('L')
-	data = numpy.array(image)
+	return _vlfeat.vl_sift(data, frames, octaves, levels, first_octave, 
+						peak_thresh, edge_thresh, norm_thresh, magnif,
+						orientations, verbose)
+
+def vl_mser(
+		data, 
+		delta=5, 
+		max_area=.75, 
+		min_area=.0002,
+		max_variation=.25, 
+		min_diversity=.2):
+	""" Computes the Maximally Stable Extremal Regions (MSER) [1] of image I 
+	with stability threshold DELTA. I is any array of class UINT8. R is a vector
+	of region seeds. \n 
+	A (maximally stable) extremal region is just a connected component of one of
+	the level sets of the image I. An extremal region can be recovered from a
+	seed X as the connected component of the level set {Y: I(Y) <= I(X)} which
+	contains the pixel o index X. \n
+	It also returns ellipsoids F fitted to the regions. Each column of F 
+	describes an ellipsoid; F(1:D,i) is the center of the elliposid and
+	F(D:end,i) are the independent elements of the co-variance matrix of the
+	ellipsoid. \n
+	Ellipsoids are computed according to the same reference frame of I seen as 
+	a matrix. This means that the first coordinate spans the first dimension of
+	I. \n
+	The function vl_plotframe() is used to plot the ellipses.
 	
-	# mser paramteres
-	delta = 10
-	max_area = .3
-	min_area = .0002
-	max_variation = .2
-	min_diversity = .7
-	
-	# call mser on data
-	[r1, f1] = vlfeat.vl_mser(data, delta, max_area, min_area, \
+	@param data           A gray-scale image in single precision.
+	@param delta          Set the DELTA parameter of the VL_MSER algorithm. 
+	                      Roughly speaking, the stability of a region is the
+	                      relative variation of the region area when the
+	                      intensity is changed of +/- Delta/2. 
+	@param max_area       Set the maximum area (volume) of the regions relative 
+	                      to the image domain area (volume). 
+	@param min_area       Set the minimum area (volume) of the regions relative 
+	                      to the image domain area (volume). 
+	@param max_variation  Set the maximum variation (absolute stability score) 
+	                      of the regions. 
+	@param min_diversity  Set the minimum diversity of the region. When the 
+	                      relative area variation of two nested regions is below 
+	                      this threshold, then only the most stable one is 
+	                      selected. 
+	"""
+	return _vlfeat.vl_mser(data, delta, max_area, min_area, \
 							max_variation, min_diversity)
 	
-	# call mser on 255 - data
-	[r2, f2] = vlfeat.vl_mser(255 - data, delta, max_area, min_area, \
-							max_variation, min_diversity)
-	
-	# get filled mser with er_fill
-	M1 = numpy.zeros(data.shape[0] * data.shape[1])
-	for r in r1:
-		s = vlfeat.vl_erfill(data, r)
-		M1[s] = M1[s] + 1
-	M1 = M1.reshape(data.shape)
-		
-	M2 = numpy.zeros(data.shape[0] * data.shape[1])
-	for r in r2:
-		s = vlfeat.vl_erfill(255 - data, r)	
-		M2[s] = M2[s] + 1
-	M2 = M2.reshape(data.shape)
-		
-	# plot ellipses and region boundaries	
-	pylab.subplot(1,2,1)		
-	pylab.gray()
-	pylab.imshow(data)
-	vl_plotframe(f1, color='#ebbd0c')
-	vl_plotframe(f2)	
-	pylab.subplot(1,2,2)	
-	pylab.gray()
-	pylab.imshow(data)
-	pylab.contour(M1, N=1, V=[1], colors='y')
-	pylab.contour(M2, N=1, V=[1], colors='g')
-	
 
-def sift_test(fileName):
-	""" Simple sift test. Tests vlfeat.vl_sift.
+def vl_erfill(data, r):
+	""" Returns the list MEMBERS of the pixels which belongs to the extremal
+	region represented by the pixel ER. \n
+	The selected region is the one that contains pixel ER and of intensity 
+	I(ER). \n
+	I must be of class UINT8 and ER must be a (scalar) index of the region
+	representative point. 
 	"""
-	# load image and convert to grayscale 
-	ic = Image.open(fileName)
-	image = ic.convert('L')
-	data = numpy.array(image, 'f')
-	
-	[f, d] = vlfeat.vl_sift(data)
-	print d.shape
-	
-	pylab.figure()
-	pylab.gray()
-	pylab.imshow(data)
-	vl_plotframe(f.transpose(), color='#ebbd0c')
-	
+	return _vlfeat.vl_erfill(data, r)
 
-if __name__ == '__main__':
-	fileName = '../../data/box.pgm'
-	#fileName = '../../data/a.jpg'
-	mser_test(fileName)
-	sift_test(fileName)
-	pylab.show()
+
 
 
 

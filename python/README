@@ -21,5 +21,3 @@ TESTING
   > cd vlfeat
   > python vlfeat.py
   (make sure you have the image box.pgm in vlfeat/data dir)
-
-test

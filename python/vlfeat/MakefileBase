@@ -1,0 +1,84 @@
+#################################################
+
+ifndef (OS)
+  OS = $(shell uname -s)
+endif
+
+ifndef (ARCH)
+  ARCH = $(shell uname -m)
+endif
+
+ifndef (NAME)
+  NAME = $(shell uname -n)
+endif
+
+ifndef (BITS)
+  ifeq ($(ARCH),x86_64)
+    BITS = 64
+  else
+    BITS = 32
+  endif
+endif
+
+#################################################
+
+COMP = gcc
+
+ifeq ($(COMPILER),icc)
+  COMP = icc
+endif
+
+ifeq ($(COMPILER),icpc)
+  COMP = icc
+endif
+
+#################################################
+
+ifeq ($(OS),Linux)
+  ifeq ($(COMP),icc)
+    CXX       = icpc
+    CXXFLAGS  = -pipe -O3 -fPIC
+    CXXFLAGS += -axTPW -unroll -rcd
+    ifeq ($(BITS),64)
+      #CXXFLAGS += -m64
+      #LFLAGS += -m64
+    else
+      #CXXFLAGS += -m32
+      #LFLAGS += -m32
+    endif
+  else
+    CXX       = g++
+    CXXFLAGS  = -pipe -O3 -fPIC
+    CXXFLAGS += -funroll-all-loops -ffast-math -ftree-vectorize
+    CXXFLAGS += -Wall -W  -Wmissing-braces -Wparentheses -Wno-unknown-pragmas -Wno-long-long
+    ifeq ($(BITS),64)
+      CXXFLAGS += -m64
+      LFLAGS += -m64
+    else
+      CXXFLAGS += -m32
+      LFLAGS += -m32
+    endif
+    CXXFLAGS += -msse
+    LFLAGS += -msse
+  endif
+endif
+
+ifeq ($(OS),Darwin)
+  ifeq ($(COMP),icc)
+    # ?
+  else
+    CXX           = g++
+    CXXFLAGS      = -pipe -O2
+    CXXFLAGS     += -Wall -W -pedantic-errors -Wmissing-braces -Wparentheses -Wno-unknown-pragmas
+    CXXFLAGS     += -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch ppc -arch i386
+    LFLAGS       += -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -arch ppc -arch i386
+  endif
+endif
+
+ifeq ($(OS),SunOS)
+  CXX             =       CC
+  CXXFLAGS        =       -DFLIP_ENDIANNESS=0
+  CXXFLAGS        +=      -fast -xarch=generic -xipo
+endif
+
+#################################################

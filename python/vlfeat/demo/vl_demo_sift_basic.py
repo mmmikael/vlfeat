@@ -13,7 +13,8 @@ if __name__ == '__main__':
 	#                     Load a figure and convert the to required format
 	# --------------------------------------------------------------------
 	I = Image.open('../../../data/a.jpg')
-	I = numpy.array(I.convert('L'), 'f', order='F') # 'F' = column-major order!
+	I = vlfeat.vl_rgb2gray(numpy.array(I))	
+	I = numpy.array(I, 'f', order='F') # 'F' = column-major order!
 
 	pylab.gray()
 	pylab.imshow(I)	

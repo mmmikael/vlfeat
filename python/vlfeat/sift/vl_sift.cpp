@@ -139,7 +139,7 @@ PyObject * vl_sift_python(
 	// set optional parameters
 	if (opt_octaves >= 0) O = opt_octaves;
 	if (opt_levels >= 0) S = opt_levels;
-	if (opt_first_octave >= 0) o_min = opt_first_octave;
+	o_min = opt_first_octave;
 
 	double edge_thresh = opt_edge_thresh;
 	double peak_thresh = opt_peak_thresh;
@@ -367,7 +367,7 @@ PyObject * vl_sift_python(
 		 * ............................................................ */
 
 		// allocate pyarray objects (column-majored)
-		int dims[2];
+		npy_intp dims[2];
 		dims[0] = 4;
 		dims[1] = nframes;
 

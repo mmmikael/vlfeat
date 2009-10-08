@@ -50,7 +50,7 @@ PyObject * vl_imsmooth_python(PyArrayObject & image, double sigma)
 
 	int M, N, K, j, k, ndims;
 	int M_, N_;
-	int dims_[3];
+	npy_intp dims_[3];
 	int *dims;
 
 	/* -----------------------------------------------------------------

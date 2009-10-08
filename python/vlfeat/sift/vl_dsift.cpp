@@ -29,6 +29,7 @@ PyObject * vl_dsift_python(
 {
 	// check data type
 	assert(pyArray.descr->type_num == PyArray_FLOAT);
+	assert(pyArray.flags & NPY_FORTRAN);
 	assert(opt_bounds.descr->type_num == PyArray_FLOAT);
 
 	int verbose = 0;
@@ -93,9 +94,9 @@ PyObject * vl_dsift_python(
 		}
 		vl_dsift_set_flat_window(dsift, useFlatWindow);
 
-		numFrames = vl_dsift_get_keypoint_num(dsift);
-		descrSize = vl_dsift_get_descriptor_size(dsift);
-		geom = vl_dsift_get_geometry(dsift);
+	    numFrames = vl_dsift_get_keypoint_num (dsift) ;
+	    descrSize = vl_dsift_get_descriptor_size (dsift) ;
+	    geom = vl_dsift_get_geometry(dsift);
 
 		if (verbose) {
 			int stepX;
@@ -134,7 +135,7 @@ PyObject * vl_dsift_python(
 		/* ---------------------------------------------------------------
 		 *                                            Create output arrays
 		 * ------------------------------------------------------------ */
-		int dims[2];
+		npy_intp dims[2];
 
 		dims[0] = descrSize;
 		dims[1] = numFrames;

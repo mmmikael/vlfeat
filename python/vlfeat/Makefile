@@ -36,6 +36,11 @@ sift/vl_sift.cpp \
 sift/vl_dsift.cpp \
 sift/vl_siftdescriptor.cpp \
 imop/vl_imsmooth.cpp \
+misc/vl_binsum.cpp \
+kmeans/vl_hikmeans.cpp \
+kmeans/vl_ikmeans.cpp \
+kmeans/vl_hikmeanspush.cpp \
+kmeans/vl_ikmeanspush.cpp \
 py_vlfeat.cpp
 
 CFLAGS += -I$(VLFEAT_DIR)/../  -I/usr/include/python2.5

@@ -60,9 +60,6 @@ VL_INLINE void transpose_descriptor(vl_sift_pix* dst, vl_sift_pix* src)
 PyObject * vl_siftdescriptor_python(
 		PyArrayObject & in_grad,
 		PyArrayObject & in_frames)
-//void
-//mexFunction(int nout, mxArray *out[],
-//            int nin, const mxArray *in[])
 {
 	// TODO: check types and dim
 	//	"GRAD must be a 2xMxN matrix of class SINGLE."
@@ -70,14 +67,12 @@ PyObject * vl_siftdescriptor_python(
 	assert(in_grad.descr->type_num == PyArray_FLOAT);
 	assert(in_frames.descr->type_num == PyArray_FLOAT64);
 	assert(in_grad.flags & NPY_FORTRAN);
+	assert(in_frames.flags & NPY_FORTRAN);
 
 	int verbose = 0;
 	int opt;
-	//  int                next = IN_END ;
-	//  mxArray const     *optarg ;
 
 	//  TODO: check if we need to do a copy of the grad array
-//	mxArray *grad_array;
 	float * grad_array;
 	vl_sift_pix *grad;
 	int M, N;
@@ -93,28 +88,10 @@ PyObject * vl_siftdescriptor_python(
 	 *                                               Check the arguments
 	 * -------------------------------------------------------------- */
 
-	//  if (nin < 2) {
-	//    mexErrMsgTxt("Two arguments required.") ;
-	//  } else if (nout > 1) {
-	//    mexErrMsgTxt("Too many output arguments.");
-	//  }
-	//
-	//  if (mxGetNumberOfDimensions (in[IN_GRAD])    != 3              ||
-	//      mxGetClassID            (in[IN_GRAD])    != mxSINGLE_CLASS ||
-	//      mxGetDimensions         (in[IN_GRAD])[0] != 2              ) {
-	//    mexErrMsgTxt("GRAD must be a 2xMxN matrix of class SINGLE.") ;
-	//  }
-	//
-	//  if (!uIsRealMatrix(in[IN_FRAMES], 4, -1)) {
-	//    mexErrMsgTxt("FRAMES must be a 4xN matrix.") ;
-	//  }
-
-
-	//  nikeys = mxGetN (in[IN_FRAMES]) ;
-	//  ikeys  = mxGetPr(in[IN_FRAMES]) ;
 	// get frames nb and data pointer
-	nikeys = in_frames.dimensions[0];
+	nikeys = in_frames.dimensions[1];
 	ikeys = (double *) in_frames.data;
+
 
 	// TODO: deal with optional params
 	//  while ((opt = uNextOption(in, nin, options, &next, &optarg)) >= 0) {
@@ -139,9 +116,8 @@ PyObject * vl_siftdescriptor_python(
 	//  TODO: convert to Python
 	//grad_array = mxDuplicateArray(in[IN_GRAD]); (copy?)
 	grad = (float*) in_grad.data; //mxGetData(grad_array);
-	M = in_grad.dimensions[1]; //mxGetDimensions(in[IN_GRAD])[1];
-	N = in_grad.dimensions[2]; //mxGetDimensions(in[IN_GRAD])[2];
-	std::cout << M << "x" << N << std::endl;
+	M = in_grad.dimensions[1];
+	N = in_grad.dimensions[2];
 
 
 	/* transpose angles */
@@ -172,7 +148,7 @@ PyObject * vl_siftdescriptor_python(
 		}
 
 		{
-			int dims[2];
+			npy_intp dims[2];
 			dims[0] = 128;
 			dims[1] = nikeys;
 
@@ -194,7 +170,6 @@ PyObject * vl_siftdescriptor_python(
 			double s = *ikeys++;
 			double th = VL_PI / 2 - *ikeys++;
 
-			std::cout << x << " " << y << " " << s << std::endl;
 
 			vl_sift_calc_raw_descriptor(filt, grad, buf, M, N, x, y, s, th);
 

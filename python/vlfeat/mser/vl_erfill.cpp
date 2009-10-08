@@ -167,7 +167,7 @@ PyObject * vl_erfill_python(PyArrayObject & image, double seed)
 	 * Save results
 	 */
 	PyArrayObject * res = (PyArrayObject*) PyArray_SimpleNew(
-		1, &last, PyArray_UINT);
+		1, (npy_intp*) &last, PyArray_UINT);
 
 	unsigned int * res_buffer = (unsigned int *) res->data;
 	for (i = 0; i < last; ++i) {

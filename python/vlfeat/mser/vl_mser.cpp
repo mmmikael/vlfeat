@@ -86,16 +86,16 @@ PyObject * vl_mser_python(
 	frames = vl_mser_get_ell(filt);
 
 	// convert results to PyArrayObjects
-	int odims[2];
+	npy_intp odims[2];
 	odims[0] = dof;
 	odims[1] = nframes;
 
 	// allocate pyarray objects
 	PyArrayObject * _regions = (PyArrayObject*) PyArray_SimpleNew(
-		1, &nregions, PyArray_DOUBLE);
+		1, (npy_intp*) &nregions, PyArray_DOUBLE);
 
 	PyArrayObject * _frames = (PyArrayObject*) PyArray_NewFromDescr(
-		&PyArray_Type, PyArray_DescrFromType(PyArray_FLOAT),
+		&PyArray_Type, PyArray_DescrFromType(PyArray_DOUBLE),
 		2, odims, NULL, NULL, NPY_F_CONTIGUOUS, NULL);
 
 	// check if valid pointers
@@ -108,7 +108,7 @@ PyObject * vl_mser_python(
 		_regions_buf[i] = regions[i];
 	}
 
-	float * _frames_buf = (float *) _frames->data;
+	double * _frames_buf = (double *) _frames->data;
 	for (j = 0; j < dof; ++j) {
 		for (i = 0; i < nframes; ++i) {
 			_frames_buf[i * dof + j] = frames[i * dof + j]; //+ ((j < ndims) ? 1.0 : 0.0);

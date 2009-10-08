@@ -8,10 +8,18 @@
 #pragma once
 
 #include <Python.h>
+#include <vector>
 
 #define PY_ARRAY_UNIQUE_SYMBOL PyArrayVlfeat
 #define NO_IMPORT_ARRAY
 #include <numpy/arrayobject.h> // in python/lib/site-packages/
+
+
+#include <boost/python.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+#include <boost/python/overloads.hpp>
+
+
 /**
  * Computes maximally stable extremal regions
  * @param pyArray
@@ -94,3 +102,20 @@ PyObject * vl_siftdescriptor_python(
  * @return
  */
 PyObject * vl_imsmooth_python(PyArrayObject & image, double sigma);
+
+/**
+ *
+ * @param H
+ * @param X
+ * @param B
+ * @param DIM
+ * @return
+ */
+PyObject * vl_binsum_python(
+		PyArrayObject & H,
+		PyArrayObject & X,
+		PyArrayObject & B,
+		int DIM);
+
+
+

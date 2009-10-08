@@ -66,7 +66,7 @@ def vl_plotframe(frames, color='#00ff00', linewidth=2):
 	
 	# just points?
 	if zero_dimensional:
-		h = plot(frames[0, :], frames[1, :], 'g.')
+		h = plot(frames[0, :], frames[1, :], '.', color=color)
 		return
 	
 	# reduce all other cases to ellipses/oriented ellipses 	

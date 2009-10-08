@@ -2,7 +2,13 @@
 		       Mikael Rousson (mikael@polarrose.com)
 
 DESCRIPTION
-  - vlfeat: c++ python wrappers of vl_erfill, vl_mser and vl_sift
+  C++ python wrappers of a subset of VLFeat (http://www.vlfeat.org). Includes the following 
+  functions:
+   - kmean: vl_ikmeans, vl_ikmeanspush, vl_hikmeans, vl_hikmeanspush
+   - mser: vl_mser, vl_erfill
+   - sift: vl_sift, vl_dsift, vl_siftdescriptor
+   - imop: vl_imsmooth
+   - misc: vl_binsum
    
 COMPILING
   The following instructions are specific for Ubuntu but it should be similar on 

@@ -9,8 +9,10 @@
 
 /* AUTORIGHTS */
 
+extern "C" {
 #include <vl/mathop.h>
 #include <vl/dsift.h>
+}
 
 #include <math.h>
 #include <assert.h>

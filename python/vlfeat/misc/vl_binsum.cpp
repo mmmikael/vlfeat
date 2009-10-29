@@ -80,7 +80,7 @@ PyObject * vl_binsum_python(
 				snprintf(str, 256, "Index out of bounds "
 					"(B(%ld)=%d).", (long int) (B_pt - (double *) B.data), j
 						+ 1);
-				printf(str);
+				printf("%s\n", str);
 			}
 
 			/* accumulate (but skip null indeces) */
@@ -206,7 +206,7 @@ PyObject * vl_binsum_python(
 				snprintf(str, 256, "Index out of bounds "
 					"(B(%ld)=%d).", (long int) (B_pt - (double *) B.data), j
 						+ 1);
-				printf(str);
+				printf("%s\n", str);
 			}
 
 			/* accumulate (but skip null indeces) */

@@ -54,7 +54,7 @@ OBJS =  $(OBJS_C) $(OBJS_CPP)
 	$(CXX) $(CFLAGS) -c $< -o $@
 
 .c.o:
-	$(CXX) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 
 .SUFFIXES:

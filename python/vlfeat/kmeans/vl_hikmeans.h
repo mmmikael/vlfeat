@@ -64,7 +64,7 @@ public:
 		// write dimensions
 		out.write((char *) &K, sizeof(int));
 		out.write((char *) &depth, sizeof(int));
-		out.write((char *) _centers->dimensions, sizeof(int) * 2);//_centers->nd);
+		out.write((char *) _centers->dimensions, sizeof(npy_intp) * 2);//_centers->nd);
 
 		// write centers
 		out.write(_centers->data, sizeof(int) *  PyArray_Size(centers));
@@ -93,7 +93,7 @@ public:
 		npy_intp dims[2];
 		in.read((char *) &K, sizeof(int));
 		in.read((char *) &depth, sizeof(int));
-		in.read((char *) dims, sizeof(int) * 2);
+		in.read((char *) dims, sizeof(npy_intp) * 2);
 
 		// allocate centers array
 		centers = PyArray_NewFromDescr(

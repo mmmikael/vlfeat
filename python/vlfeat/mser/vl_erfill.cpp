@@ -12,11 +12,13 @@
 #include <string.h>
 #include <assert.h>
 
+extern "C" {
 #include <src/generic-driver.h>
 #include <vl/generic.h>
 #include <vl/stringop.h>
 #include <vl/pgm.h>
 #include <vl/mser.h>
+}
 
 #define MIN(x,y) (((x)<(y))?(x):(y))
 #define MAX(x,y) (((x)>(y))?(x):(y))
@@ -166,8 +168,9 @@ PyObject * vl_erfill_python(PyArrayObject & image, double seed)
 	/*
 	 * Save results
 	 */
+	npy_intp _last = (npy_intp) last;
 	PyArrayObject * res = (PyArrayObject*) PyArray_SimpleNew(
-		1, (npy_intp*) &last, PyArray_UINT);
+		1, (npy_intp*) &_last, PyArray_UINT);
 
 	unsigned int * res_buffer = (unsigned int *) res->data;
 	for (i = 0; i < last; ++i) {

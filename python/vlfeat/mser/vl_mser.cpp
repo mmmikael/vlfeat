@@ -6,11 +6,13 @@
 
 #include "../py_vlfeat.h"
 
+extern "C" {
 #include <src/generic-driver.h>
 #include <vl/generic.h>
 #include <vl/stringop.h>
 #include <vl/pgm.h>
 #include <vl/mser.h>
+}
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -46,9 +48,11 @@ PyObject * vl_mser_python(
 	unsigned int height = pyArray.dimensions[1];
 
 	VlMserFilt *filt = 0;
-	int i, j, dof, nregions, nframes, q;
+	int i, j, dof, nframes, q;
 	vl_uint const *regions;
 	float const *frames;
+
+	npy_intp nregions;
 
 	// image dims
 	int ndims = 2;
@@ -78,7 +82,7 @@ PyObject * vl_mser_python(
 	vl_mser_ell_fit(filt);
 
 	// get results
-	nregions = vl_mser_get_regions_num(filt);
+	nregions = (npy_intp) vl_mser_get_regions_num(filt);
 	regions = vl_mser_get_regions(filt);
 
 	nframes = vl_mser_get_ell_num(filt);

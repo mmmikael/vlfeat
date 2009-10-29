@@ -6,8 +6,10 @@
 
 #include "../py_vlfeat.h"
 
+extern "C" {
 #include <vl/mathop.h>
 #include <vl/sift.h>
+}
 
 #include <math.h>
 #include <assert.h>

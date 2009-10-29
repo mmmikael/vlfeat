@@ -10,8 +10,10 @@
 #include<string.h>
 #include<assert.h>
 
+extern "C" {
 #include <vl/ikmeans.h>
 #include <vl/generic.h>
+}
 
 #include "vl_ikmeans.h"
 
@@ -26,7 +28,7 @@ PyObject * vl_ikmeans_python(
 	assert(inputData.descr->type_num == PyArray_UBYTE);
 	assert(inputData.flags & NPY_FORTRAN);
 
-	int M, N;
+	npy_intp M, N;
 	int err = 0;
 
 	vl_uint8 * data;

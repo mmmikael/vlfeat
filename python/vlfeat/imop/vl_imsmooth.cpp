@@ -13,9 +13,11 @@
 
 #include "../py_vlfeat.h"
 
+extern "C" {
 #include <vl/generic.h>
 #include <vl/mathop.h>
 #include <vl/imopv.h>
+}
 
 #include <stdlib.h>
 #include <string.h>

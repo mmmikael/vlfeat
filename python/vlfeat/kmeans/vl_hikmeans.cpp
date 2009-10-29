@@ -11,8 +11,10 @@
 #include<string.h>
 #include<assert.h>
 
+extern "C" {
 #include <vl/hikmeans.h>
 #include <vl/generic.h>
+}
 
 #include "vl_hikmeans.h"
 

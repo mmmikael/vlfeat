@@ -153,7 +153,7 @@ mexFunction(int nout, mxArray *out[],
 
     /* We sum efficiently by a single pass of B_pt in memory order.
      * This however makes the algorithm a bit more involved. How the
-     * sum is performed is easeir understood by an example. Consider
+     * sum is performed is easier understood by an example. Consider
      * the case d = 3 and BD = 5. So elements in B are indexed as
      *
      *  B[i0, i1, id, i4, i5]  (note that id=i3)
@@ -204,7 +204,7 @@ mexFunction(int nout, mxArray *out[],
                  j + 1) ;
       }
 
-      /* accumulate (but skip null indeces) */
+      /* accumulate (but skip null indices) */
       if (j >= 0) {
         R_pt [j * srd] += *X_pt ;
       }

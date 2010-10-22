@@ -1,5 +1,6 @@
                                  VLFeat Python extensions
 		       Mikael Rousson (mikael@polarrose.com)
+		Quickshift functions: Andreas Mueller (amueller@ais.uni-bonn.de)
 
 DESCRIPTION
   C++ python wrappers of a subset of VLFeat (http://www.vlfeat.org). 
@@ -11,9 +12,10 @@ DESCRIPTION
    - imop: vl_imsmooth
    - misc: vl_binsum
    - plotop: vl_plotframe
+   - quickshift: vl_quickseg,vl_quickvis 
   
   and the following test functions:
-   - demo: vl_demo_sift_basic, vl_demo_sift_edge, vl_demo_sift_or, vl_demo_sift_peak
+   - demo: vl_demo_sift_basic, vl_demo_sift_edge, vl_demo_sift_or, vl_demo_sift_peak, vl_quickshift
    - test: vl_test_ikmeans vl_test_hikmeans, vl_test_pattern
   
    
@@ -30,6 +32,8 @@ TESTING
   > sudo apt-get install python-numpy
   > sudo apt-get install python-matplotlib
   > sudo apt-get install python-imaging
+	
+  For the quickshift functions, you need numpy in version 1.4 or later.
 
   Then, you need to set the system variable to where is README is located:
   > export PYTHONPATH="path to this README"
@@ -40,6 +44,7 @@ TESTING
   > python vl_demo_sift_edge.py
   > python vl_demo_sift_peak.py
   > python vl_demo_sift_or.py
+  > python vl_demo_quickshift.py
   * In vlfeat/test
   > python vl_test_ikmeans.py
   > python vl_test_hikmeans.py

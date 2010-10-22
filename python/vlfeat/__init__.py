@@ -1,5 +1,6 @@
 import _vlfeat
 import numpy
+from quickshift import vl_quickseg,vl_quickvis
 
 def vl_sift(
 		data, 

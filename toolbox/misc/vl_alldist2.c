@@ -4,10 +4,10 @@
 **/
 
 /* AUTORIGHTS
-Copyright 2007 (c) Andrea Vedaldi and Brian Fulkerson
+Copyright (C) 2007-10 Andrea Vedaldi and Brian Fulkerson
 
-This file is part of VLFeat, available in the terms of the GNU
-General Public License version 2.
+This file is part of VLFeat, available under the terms of the
+GNU GPLv2, or (at your option) any later version.
 */
 
 #include <mexutils.h>
@@ -37,11 +37,11 @@ enum {
   opt_MIN
 } ;
 
-uMexOption options [] = {
+vlmxOption  options [] = {
   {"linf",         0,   opt_LINF          },
   {"l2",           0,   opt_L2            },
   {"l1",           0,   opt_L1            },
-  {"l0",           0,   opt_L0            },  
+  {"l0",           0,   opt_L0            },
   {"chi2",         0,   opt_CHI2          },
   {"hell",         0,   opt_HELL          },
 
@@ -50,7 +50,7 @@ uMexOption options [] = {
   {"kchi2",        0,   opt_KCHI2         },
   {"khell",        0,   opt_KHELL         },
 
-  {"min",          0,   opt_MIN           },  
+  {"min",          0,   opt_MIN           },
   {0,              0,   0                 }
 } ;
 
@@ -74,14 +74,14 @@ uMexOption options [] = {
 /*#define CMP(s1,s2) ((double)(s1*s2)) */
 
 /* for L1 norm */
-#define CMP(s1,s2) ((double)MIN(s1,s2)) 
+#define CMP(s1,s2) ((double)MIN(s1,s2))
 
-#define UINT8_t  unsigned char
-#define  INT8_t  char
-#define UINT16_t unsigned short
-#define  INT16_t short
-#define UINT32_t unsigned int
-#define  INT32_t int
+#define UINT8_t  vl_uint8
+#define  INT8_t  vl_int8
+#define UINT16_t vl_uint16
+#define  INT16_t vl_int16
+#define UINT32_t vl_uint32
+#define  INT32_t vl_int32
 #define SINGLE_t float
 #define DOUBLE_t double
 
@@ -91,10 +91,10 @@ uMexOption options [] = {
   (                                                                     \
    AC ## _t * pt, DC ## _t * s1_pt,                                     \
    DC ## _t * s2_pt,                                                    \
-   int L, int N1, int N2,                                               \
+   vl_size L, vl_size N1, vl_size N2,                                   \
    bool self)                                                           \
   {                                                                     \
-    int j1,j2,l ;                                                       \
+    vl_uindex j1,j2,l ;                                                 \
     for(j2 = 0 ; j2 < N2 ; ++j2)  {                                     \
       for(j1 = 0 ; j1 < N1 ; ++j1) {                                    \
         if(! self || j1>=j2) {                                          \
@@ -114,7 +114,7 @@ uMexOption options [] = {
       }                                                                 \
     }                                                                   \
   }                                                                     \
-  
+
 #define CORE_SPARSE(NORM, F)                                            \
   {                                                                     \
     double const * s1_pt = mxGetPr(in[IN_S1]) ;                         \
@@ -124,7 +124,7 @@ uMexOption options [] = {
     mwIndex  const * s2_ir  = 0 ;                                       \
     mwIndex const * s2_jc  = 0 ;                                        \
     double * pt = mxGetPr(out[OUT_D]) ;                                 \
-    int j1, j2 ;                                                        \
+    vl_uindex j1, j2 ;                                                  \
                                                                         \
     if (self) {                                                         \
       s2_pt = s1_pt ;                                                   \
@@ -268,23 +268,23 @@ DEF_CLASS (MIN,   F_MIN  )
 
 /* driver */
 void
-mexFunction(int nout, mxArray *out[], 
+mexFunction(int nout, mxArray *out[],
             int nin, const mxArray *in[])
 {
 
-  typedef int  unsigned data_t ; 
+  typedef int  unsigned data_t ;
 
   /*  mxClassID data_class = mxINT8_CLASS ;*/
   enum {IN_S1,IN_S2} ;
   enum {OUT_D=0} ;
-  int L,N1,N2 ;
-  int sparse = 0 ;
+  vl_size L,N1,N2 ;
+  vl_bool sparse = 0 ;
   void const * s1_pt ;
   void const * s2_pt ;
   mxClassID data_class ;
   mxClassID acc_class ;
-  mwSize dims [2] ; 
-  
+  mwSize dims [2] ;
+
   /* for option parsing */
   bool           self = 1 ;      /* called with one numeric argument? */
   int            norm = opt_L2 ; /* type of norm to be computed       */
@@ -295,33 +295,33 @@ mexFunction(int nout, mxArray *out[],
   /** -----------------------------------------------------------------
    **                                               Check the arguments
    ** -------------------------------------------------------------- */
-  
+
   if (nout > 1) {
     mexErrMsgTxt("Too many output arguments.");
   }
 
   if (nin < 1) {
-    mexErrMsgTxt("At leat one argument required.") ;    
+    mexErrMsgTxt("At leat one argument required.") ;
   }
-  
+
   if(! mxIsNumeric(in[IN_S1])) {
     mexErrMsgTxt ("X must be numeric") ;
   }
-  
+
   if (nin >= 2 && mxIsNumeric(in[IN_S2])) {
     self = 0 ;
     next = 2 ;
   }
 
   sparse = mxIsSparse(in[IN_S1]) ;
-  
+
   if (sparse && nin >=2 && mxIsNumeric(in[IN_S2])) {
     if (! mxIsSparse(in[IN_S2])) {
       mexErrMsgTxt ("X and Y must be either both full or sparse.") ;
     }
   }
 
-  while ((opt = uNextOption(in, nin, options, &next, &optarg)) >= 0) {
+  while ((opt = vlmxNextOption (in, nin, options, &next, &optarg)) >= 0) {
     switch (opt) {
     case opt_LINF :
     case opt_L2 :
@@ -339,32 +339,32 @@ mexFunction(int nout, mxArray *out[],
       norm = opt ;
       break ;
 
-    default: 
-      assert(0) ;
+    default:
+      abort() ;
     }
   }
-    
+
   data_class = mxGetClassID(in[IN_S1]) ;
   if ((!self) && data_class != mxGetClassID(in[IN_S2])) {
     mexErrMsgTxt("X and Y must have the same numeric class") ;
   }
 
   assert ((! sparse) || (data_class == mxDOUBLE_CLASS)) ;
-  
-  L  = mxGetM(in[IN_S1]) ; 
+
+  L  = mxGetM(in[IN_S1]) ;
   N1 = mxGetN(in[IN_S1]) ;
   N2 = self ?  N1 : mxGetN(in[IN_S2]) ;
-  
-  dims[0] = N1 ; 
+
+  dims[0] = N1 ;
   dims[1] = N2 ;
-  
+
   if ((!self) && L != mxGetM(in[IN_S2])) {
     mexErrMsgTxt("X and Y must have the same number of rows") ;
   }
-  
-  s1_pt = mxGetData(in[IN_S1]) ; 
+
+  s1_pt = mxGetData(in[IN_S1]) ;
   s2_pt = self ? s1_pt : mxGetData(in[IN_S2]) ;
-  
+
 #define DISPATCH_CLASS(NORM, DC,AC)                                     \
   case mx ## DC ## _CLASS :                                             \
     acc_class = mx ## AC ## _CLASS ;                                    \
@@ -397,7 +397,7 @@ mexFunction(int nout, mxArray *out[],
       }                                                                 \
     }                                                                   \
   break ;
-  
+
   switch (norm) {
     DISPATCH_NORM(LINF ) ;
     DISPATCH_NORM(L2   ) ;
@@ -409,10 +409,10 @@ mexFunction(int nout, mxArray *out[],
     DISPATCH_NORM(KL2  ) ;
     DISPATCH_NORM(KL1  ) ;
     DISPATCH_NORM(KCHI2) ;
-    DISPATCH_NORM(KHELL) ;    
+    DISPATCH_NORM(KHELL) ;
 
     DISPATCH_NORM(MIN  ) ;
   default:
-    assert(0) ;
+    abort() ;
   }
 }

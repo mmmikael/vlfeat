@@ -6,10 +6,10 @@
  **/
 
 /* AUTORIGHTS
-Copyright 2007 (c) Andrea Vedaldi and Brian Fulkerson
+Copyright (C) 2007-10 Andrea Vedaldi and Brian Fulkerson
 
-This file is part of VLFeat, available in the terms of the GNU
-General Public License version 2.
+This file is part of VLFeat, available under the terms of the
+GNU GPLv2, or (at your option) any later version.
 */
 
 /** 
@@ -234,9 +234,9 @@ vl_quickshift_new(vl_qs_type const * image, int height, int width,
   q->tau      = VL_MAX(height,width)/50;
   q->sigma    = VL_MAX(2, q->tau/3);
 
-  q->dists    = vl_malloc(sizeof(vl_qs_type)*height*width);
-  q->parents  = vl_malloc(sizeof(int)*height*width); 
-  q->density  = vl_malloc(sizeof(vl_qs_type)*height*width);
+  q->dists    = vl_calloc(height*width, sizeof(vl_qs_type));
+  q->parents  = vl_calloc(height*width, sizeof(int)); 
+  q->density  = vl_calloc(height*width, sizeof(vl_qs_type)) ;
 
   return q;
 }
@@ -387,11 +387,10 @@ void vl_quickshift_process(VlQS * q)
           }
         }
 
-        /* parents_i is the linear index of j which is the best pair (in matlab
-         * notation
+        /* parents_i is the linear index of j which is the best pair 
          * dists_i is the score of the best match
          */
-        parents [i1 + N1 * i2] = j1_best + N1 * j2_best + 1 ;
+        parents [i1 + N1 * i2] = j1_best + N1 * j2_best ;
         dists[i1 + N1 * i2] = sc_best ;
       }
     }  
@@ -431,7 +430,7 @@ void vl_quickshift_process(VlQS * q)
         /* parents is the index of the best pair */
         /* dists_i is the minimal distance, inf implies no Ej > Ei within
          * distance tau from the point */
-        parents [i1 + N1 * i2] = j1_best + N1 * j2_best + 1 ;
+        parents [i1 + N1 * i2] = j1_best + N1 * j2_best ;
         dists[i1 + N1 * i2] = sqrt(d_best) ;
       }
     }  

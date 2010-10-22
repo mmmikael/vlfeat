@@ -1,13 +1,13 @@
 /** @file    pgm.h
- ** @author  Andrea Vedaldi
  ** @brief   Portable graymap format (PGM) parser
+ ** @author  Andrea Vedaldi
  **/
 
 /* AUTORIGHTS
-Copyright 2007 (c) Andrea Vedaldi and Brian Fulkerson
+Copyright (C) 2007-10 Andrea Vedaldi and Brian Fulkerson
 
-This file is part of VLFeat, available in the terms of the GNU
-General Public License version 2.
+This file is part of VLFeat, available under the terms of the
+GNU GPLv2, or (at your option) any later version.
 */
 
 #ifndef VL_PGM_H
@@ -17,13 +17,15 @@ General Public License version 2.
 #include "mathop.h"
 #include <stdio.h>
 
-/** @name PGM parser error codes */
-/*@{*/
-#define VL_ERR_PGM_INV_HEAD  101 /**< Invalid PGM header section. */
-#define VL_ERR_PGM_INV_META  102 /**< Invalid PGM meta section.   */
-#define VL_ERR_PGM_INV_DATA  103 /**< Invalid PGM data section.   */
-#define VL_ERR_PGM_IO        104 /**< Generic I/O error.          */
-/*@}*/
+/** @name PGM parser error codes
+ ** @{ */
+
+#define VL_ERR_PGM_INV_HEAD  101 /**< Invalid PGM header section */
+#define VL_ERR_PGM_INV_META  102 /**< Invalid PGM meta section */
+#define VL_ERR_PGM_INV_DATA  103 /**< Invalid PGM data section */
+#define VL_ERR_PGM_IO        104 /**< Generic I/O error */
+
+/** @} */
 
 /** @brief PGM image meta data
  **

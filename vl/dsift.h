@@ -1,17 +1,17 @@
 /** @file     dsift.h
- ** #brief    Dense SIFT (DSIFT)
- ** #author   Andrea Vedaldi
+ ** @brief    Dense SIFT (DSIFT)
+ ** @author   Andrea Vedaldi
  **/
 
 /* AUTORIGHTS
- Copyright 2007 (c) Andrea Vedaldi and Brian Fulkerson
- 
- This file is part of VLFeat, available in the terms of the GNU
- General Public License version 2.
- */
+Copyright (C) 2007-10 Andrea Vedaldi and Brian Fulkerson
 
-#ifndef VL_DSIFT_H 
-#define VL_DSIFT_H 
+This file is part of VLFeat, available under the terms of the
+GNU GPLv2, or (at your option) any later version.
+*/
+
+#ifndef VL_DSIFT_H
+#define VL_DSIFT_H
 
 #include "generic.h"
 
@@ -21,7 +21,7 @@ typedef struct VlDsiftKeypoint_
   double x ; /**< x coordinate */
   double y ; /**< y coordinate */
   double s ; /**< scale */
-  double norm ; /**< norm */
+  double norm ; /**< SIFT descriptor norm */
 } VlDsiftKeypoint ;
 
 /** @brief Dense SIFT descriptor geometry */
@@ -35,8 +35,8 @@ typedef struct VlDsiftDescriptorGeometry_
 } VlDsiftDescriptorGeometry ;
 
 /** @brief Dense SIFT filter */
-typedef struct VlDsiftFilter_ 
-{  
+typedef struct VlDsiftFilter_
+{
   int imWidth ;            /**< @internal @brief image width */
   int imHeight ;           /**< @internal @brief image height */
 
@@ -47,11 +47,12 @@ typedef struct VlDsiftFilter_
   int boundMinY ;          /**< frame bounding box min Y */
   int boundMaxX ;          /**< frame bounding box max X */
   int boundMaxY ;          /**< frame bounding box max Y */
-   
+
   /** descriptor parameters */
   VlDsiftDescriptorGeometry geom ;
 
-  int useFlatWindow ;      /**< flag: whether to drop the Gaussian window */
+  int useFlatWindow ;      /**< flag: whether to approximate the Gaussian window with a flat one */
+  double windowSize ;      /**< size of the Gaussian window */
 
   int numFrames ;          /**< number of sampled frames */
   int descrSize ;          /**< size of a descriptor */
@@ -71,8 +72,8 @@ VL_EXPORT VlDsiftFilter *vl_dsift_new (int width, int height) ;
 VL_EXPORT VlDsiftFilter *vl_dsift_new_basic (int width, int height, int step, int binSize) ;
 VL_EXPORT void vl_dsift_delete (VlDsiftFilter *self) ;
 VL_EXPORT void vl_dsift_process (VlDsiftFilter *self, float const* im) ;
-VL_INLINE void vl_dsift_transpose_descriptor (float* dst, 
-                                             float const* src,                                             
+VL_INLINE void vl_dsift_transpose_descriptor (float* dst,
+                                             float const* src,
                                              int numBinT,
                                              int numBinX,
                                              int numBinY) ;
@@ -91,6 +92,7 @@ VL_INLINE void vl_dsift_set_bounds (VlDsiftFilter *self,
 VL_INLINE void vl_dsift_set_geometry (VlDsiftFilter *self,
                                      VlDsiftDescriptorGeometry const* geom) ;
 VL_INLINE void vl_dsift_set_flat_window (VlDsiftFilter *self, vl_bool flatWindow) ;
+VL_INLINE void vl_dsift_set_window_size (VlDsiftFilter *self, double windowSize) ;
 /** @} */
 
 /** @name Retrieving data and parameters
@@ -105,11 +107,12 @@ VL_INLINE void            vl_dsift_get_bounds          (VlDsiftFilter const *sel
                                                        int* minY,
                                                        int* maxX,
                                                        int* maxY) ;
-VL_INLINE void            vl_dsift_get_steps           (VlDsiftFilter const*self, 
-                                                       int* stepX, 
+VL_INLINE void            vl_dsift_get_steps           (VlDsiftFilter const* self,
+                                                       int* stepX,
                                                        int* stepY) ;
 VL_INLINE VlDsiftDescriptorGeometry const* vl_dsift_get_geometry (VlDsiftFilter const *self) ;
 VL_INLINE vl_bool         vl_dsift_get_flat_window     (VlDsiftFilter const *self) ;
+VL_INLINE double          vl_dsift_get_window_size     (VlDsiftFilter const *self) ;
 /** @} */
 
 VL_EXPORT
@@ -117,19 +120,19 @@ void _vl_dsift_update_buffers (VlDsiftFilter *self) ;
 
 /** ------------------------------------------------------------------
  ** @brief Get descriptor size.
- ** @param self DSIFT filter.
+ ** @param self DSIFT filter object.
  ** @return size of a descriptor.
  **/
 
 int
-vl_dsift_get_descriptor_size (VlDsiftFilter const *self) 
+vl_dsift_get_descriptor_size (VlDsiftFilter const *self)
 {
   return self->descrSize ;
 }
 
 /** ------------------------------------------------------------------
  ** @brief Get descriptors.
- ** @param f DSIFT filter.
+ ** @param self DSIFT filter object.
  ** @return descriptors.
  **/
 
@@ -141,7 +144,7 @@ vl_dsift_get_descriptors (VlDsiftFilter const *self)
 
 /** ------------------------------------------------------------------
  ** @brief Get keypoints
- ** @param self DSIFT filter.
+ ** @param self DSIFT filter object.
  **/
 
 VlDsiftKeypoint const *
@@ -152,7 +155,7 @@ vl_dsift_get_keypoints (VlDsiftFilter const *self)
 
 /** ------------------------------------------------------------------
  ** @brief Get number of keypoints
- ** @param self DSIFT filter.
+ ** @param self DSIFT filter object.
  **/
 
 int
@@ -163,12 +166,8 @@ vl_dsift_get_keypoint_num (VlDsiftFilter const *self)
 
 /** ------------------------------------------------------------------
  ** @brief Get SIFT descriptor geometry
- ** @param self DSIFT filter.
- ** @param numBinT
- ** @param numBinX
- ** @parma numBinY
- ** @param binSizeX
- ** @param binSizeY
+ ** @param self DSIFT filter object.
+ ** @return DSIFT descriptor geometry.
  **/
 
 VlDsiftDescriptorGeometry const* vl_dsift_get_geometry (VlDsiftFilter const *self)
@@ -178,15 +177,15 @@ VlDsiftDescriptorGeometry const* vl_dsift_get_geometry (VlDsiftFilter const *sel
 
 /** ------------------------------------------------------------------
  ** @brief Get bounds
- ** @param self DSIFT filter.
+ ** @param self DSIFT filter object.
  ** @param minX bounding box minimum X coordinate.
- ** @parma minY bounding box minimum Y coordinate.
+ ** @param minY bounding box minimum Y coordinate.
  ** @param maxX bounding box maximum X coordinate.
  ** @param maxY bounding box maximum Y coordinate.
  **/
 
 void
-vl_dsift_get_bounds (VlDsiftFilter const* self, 
+vl_dsift_get_bounds (VlDsiftFilter const* self,
                     int *minX, int *minY, int *maxX, int *maxY)
 {
   *minX = self->boundMinX ;
@@ -197,7 +196,7 @@ vl_dsift_get_bounds (VlDsiftFilter const* self,
 
 /** ------------------------------------------------------------------
  ** @brief Get flat window flag
- ** @param self DSIFT filter.
+ ** @param self DSIFT filter object.
  ** @return @c TRUE if the DSIFT filter uses a flat window.
  **/
 
@@ -209,13 +208,13 @@ vl_dsift_get_flat_window (VlDsiftFilter const* self)
 
 /** ------------------------------------------------------------------
  ** @brief Get steps
- ** @param self DSIFT filter.
+ ** @param self DSIFT filter object.
  ** @param stepX sampling step along X.
  ** @param stepY sampling step along Y.
  **/
 
 void
-vl_dsift_get_steps (VlDsiftFilter const* self, 
+vl_dsift_get_steps (VlDsiftFilter const* self,
                    int* stepX,
                    int* stepY)
 {
@@ -225,13 +224,13 @@ vl_dsift_get_steps (VlDsiftFilter const* self,
 
 /** ------------------------------------------------------------------
  ** @brief Set steps
- ** @param self DSIFT filter.
+ ** @param self DSIFT filter object.
  ** @param stepX sampling step along X.
  ** @param stepY sampling step along Y.
  **/
 
 void
-vl_dsift_set_steps (VlDsiftFilter* self, 
+vl_dsift_set_steps (VlDsiftFilter* self,
                    int stepX,
                    int stepY)
 {
@@ -242,7 +241,7 @@ vl_dsift_set_steps (VlDsiftFilter* self,
 
 /** ------------------------------------------------------------------
  ** @brief Set bounds
- ** @param self DSIFT filter.
+ ** @param self DSIFT filter object.
  ** @param minX bounding box minimum X coordinate.
  ** @param minY bounding box minimum Y coordinate.
  ** @param maxX bounding box maximum X coordinate.
@@ -250,7 +249,7 @@ vl_dsift_set_steps (VlDsiftFilter* self,
  **/
 
 void
-vl_dsift_set_bounds (VlDsiftFilter* self, 
+vl_dsift_set_bounds (VlDsiftFilter* self,
                     int minX, int minY, int maxX, int maxY)
 {
   self->boundMinX = minX ;
@@ -262,12 +261,12 @@ vl_dsift_set_bounds (VlDsiftFilter* self,
 
 /** ------------------------------------------------------------------
  ** @brief Set SIFT descriptor geometry
- ** @param self DSIFT filter.
+ ** @param self DSIFT filter object.
  ** @param geom descriptor geometry parameters.
  **/
 
 void
-vl_dsift_set_geometry (VlDsiftFilter *self, 
+vl_dsift_set_geometry (VlDsiftFilter *self,
                       VlDsiftDescriptorGeometry const *geom)
 {
   self->geom = *geom ;
@@ -276,12 +275,12 @@ vl_dsift_set_geometry (VlDsiftFilter *self,
 
 /** ------------------------------------------------------------------
  ** @brief Set flat window flag
- ** @param self DSIFT filter.
+ ** @param self DSIFT filter object.
  ** @param useFlatWindow @c true if the DSIFT filter should use a flat window.
  **/
 
 void
-vl_dsift_set_flat_window (VlDsiftFilter* self, 
+vl_dsift_set_flat_window (VlDsiftFilter* self,
                          int useFlatWindow)
 {
   self->useFlatWindow = useFlatWindow ;
@@ -292,7 +291,7 @@ vl_dsift_set_flat_window (VlDsiftFilter* self,
  **
  ** @param dst destination buffer.
  ** @param src source buffer.
- ** @param numBinT 
+ ** @param numBinT
  ** @param numBinX
  ** @param numBinY
  **
@@ -302,26 +301,51 @@ vl_dsift_set_flat_window (VlDsiftFilter* self,
  ** dsift(transpose(I),y,x)</code>
  **/
 
-VL_INLINE void 
-vl_dsift_transpose_descriptor (float* dst, 
+VL_INLINE void
+vl_dsift_transpose_descriptor (float* dst,
                               float const* src,
                               int numBinT,
                               int numBinX,
                               int numBinY)
 {
   int t, x, y ;
-    
+
   for (y = 0 ; y < numBinY ; ++y) {
     for (x = 0 ; x < numBinX ; ++x) {
       int offset  = numBinT * (x + y * numBinX) ;
       int offsetT = numBinT * (y + x * numBinY) ;
-      
+
       for (t = 0 ; t < numBinT ; ++t) {
         int tT = numBinT / 4 - t ;
         dst [offsetT + (tT + numBinT) % numBinT] = src [offset + t] ;
       }
     }
   }
+}
+
+/** ------------------------------------------------------------------
+ ** @brief Set SIFT descriptor Gaussian window size
+ ** @param self DSIFT filter object.
+ ** @param windowSize window size.
+ **/
+
+void
+vl_dsift_set_window_size(VlDsiftFilter * self, double windowSize)
+{
+  assert(windowSize >= 0.0) ;
+  self->windowSize = windowSize ;
+}
+
+/** ------------------------------------------------------------------
+ ** @brief Get SIFT descriptor Gaussian window size
+ ** @param self DSIFT filter object.
+ ** @return window size.
+ **/
+
+VL_INLINE double
+vl_dsift_get_window_size(VlDsiftFilter const * self)
+{
+  return self->windowSize ;
 }
 
 /*  VL_DSIFT_H */

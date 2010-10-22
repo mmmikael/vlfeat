@@ -4,10 +4,10 @@
 **/
 
 /* AUTORIGHTS
-Copyright 2007 (c) Andrea Vedaldi and Brian Fulkerson
+Copyright (C) 2007-10 Andrea Vedaldi and Brian Fulkerson
 
-This file is part of VLFeat, available in the terms of the GNU
-General Public License version 2.
+This file is part of VLFeat, available under the terms of the
+GNU GPLv2, or (at your option) any later version.
 */
 
 #include<mexutils.h>
@@ -26,7 +26,7 @@ enum {
   opt_verbose
 } ;
 
-uMexOption options [] = {
+vlmxOption  options [] = {
   {"Method",       1,   opt_method      },
   {"Verbose",      0,   opt_verbose     },
   {0,              0,   0               }
@@ -59,41 +59,41 @@ mexFunction(int nout, mxArray *out[],
   /** -----------------------------------------------------------------
    **                                               Check the arguments
    ** -------------------------------------------------------------- */
-  
+
   if (nin < 2) {
     mexErrMsgTxt("At least two arguments required.") ;
   } else if (nout > 2) {
     mexErrMsgTxt("Too many output arguments.") ;
   }
-  
+
   if(mxGetClassID(in[IN_X]) != mxUINT8_CLASS) {
     mexErrMsgTxt("X must be of class UINT8") ;
   }
-  
+
   if(mxGetClassID(in[IN_C]) != mxINT32_CLASS) {
     mexErrMsgTxt("C must be of class INT32") ;
   }
-  
+
   M = mxGetM(in[IN_X]) ;  /* n of components */
   N = mxGetN(in[IN_X]) ;  /* n of elements */
   K = mxGetN(in[IN_C]) ;  /* n of centers */
-  
-  if( mxGetM(in[IN_C]) != M ) {
+
+  if( (int) mxGetM(in[IN_C]) != M ) {
     mexErrMsgTxt("DATA and CENTERS must have the same number of columns.") ;
   }
-  
-  while ((opt = uNextOption(in, nin, options, &next, &optarg)) >= 0) {
+
+  while ((opt = vlmxNextOption (in, nin, options, &next, &optarg)) >= 0) {
     char buf [1024] ;
-    
+
     switch (opt) {
-      
+
     case opt_verbose :
       ++ verb ;
       break ;
-            
+
     case opt_method :
-      if (!uIsString (optarg, -1)) {
-        mexErrMsgTxt("'Method' must be a string.") ;        
+      if (!vlmxIsString (optarg, -1)) {
+        mexErrMsgTxt("'Method' must be a string.") ;
       }
       if (mxGetString (optarg, buf, sizeof(buf))) {
         mexErrMsgTxt("Option argument too long.") ;
@@ -105,26 +105,25 @@ mexFunction(int nout, mxArray *out[],
       } else {
         mexErrMsgTxt("Unknown cost type.") ;
       }
-      
+
       break ;
-      
+
     default :
-      assert(0) ;
-      break ;
+      abort() ;
     }
   }
-  
+
   /** -----------------------------------------------------------------
    **                                               Check the arguments
    ** -------------------------------------------------------------- */
-  
+
   if (verb) {
     char const * method_name = 0 ;
     switch (method_type) {
     case VL_IKM_LLOYD: method_name = "Lloyd" ; break ;
     case VL_IKM_ELKAN: method_name = "Elkan" ; break ;
     default :
-      assert (0) ;
+      abort() ;
     }
     mexPrintf("ikmeanspush: Method = %s\n", method_name) ;
     mexPrintf("ikmeanspush: ndata  = %d\n", N) ;
@@ -136,11 +135,11 @@ mexFunction(int nout, mxArray *out[],
   centers = (vl_ikm_acc*)  mxGetData (in[IN_C]) ;
   asgn    = (vl_uint*)     mxGetData (out[OUT_ASGN]) ;
   ikmf    = vl_ikm_new (method_type) ;
-  
+
   vl_ikm_set_verbosity  (ikmf, verb) ;
   vl_ikm_init           (ikmf, centers, M, K) ;
   vl_ikm_push           (ikmf, asgn, data, N) ;
-  
+
   /* adjust for MATLAB indexing */
   for(j = 0 ; j < N ; ++j) ++ asgn[j] ;
 

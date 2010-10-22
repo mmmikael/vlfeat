@@ -5,10 +5,10 @@
  **/
 
 /* AUTORIGHTS
-Copyright 2007 (c) Andrea Vedaldi and Brian Fulkerson
+Copyright (C) 2007-10 Andrea Vedaldi and Brian Fulkerson
 
-This file is part of VLFeat, available in the terms of the GNU
-General Public License version 2.
+This file is part of VLFeat, available under the terms of the
+GNU GPLv2, or (at your option) any later version.
 */
 
 #include <mexutils.h>
@@ -22,7 +22,7 @@ General Public License version 2.
 enum {opt_mass = 1, opt_numLabels, opt_verbose} ;
 
 /* options */
-uMexOption options [] = {
+vlmxOption  options [] = {
   {"Mass",         1,   opt_mass,         },
   {"NumLabels",    1,   opt_numLabels     },
   {"Verbose",      0,   opt_verbose       },
@@ -54,11 +54,11 @@ uMexOption options [] = {
 #include "inthist.tc"
 
 void
-mexFunction(int nout, mxArray *out[], 
+mexFunction(int nout, mxArray *out[],
             int nin, const mxArray *in[])
 {
   mwSize dims [3] ;
-  int numDims ; 
+  vl_size numDims ;
   mwSize const * dimsPt = 0 ;
 
   vl_uint32* labelsPt  = 0 ;
@@ -66,8 +66,9 @@ mexFunction(int nout, mxArray *out[],
   void*      histPt    = 0 ;
   vl_uint32  numLabels = 0 ;
   mxClassID  dataClass = mxUINT32_CLASS ;
-  int width, height, numMaps, k, q ;
- 
+  vl_size width, height, numMaps ;
+  vl_uindex k, q ;
+
   enum {IN_LABELS = 0, IN_END} ;
   enum {OUT_HIST = 0} ;
   int opt ;
@@ -77,25 +78,25 @@ mexFunction(int nout, mxArray *out[],
 
   /* ------------------------------------------------------------------
   **                                                Check the arguments
-  ** --------------------------------------------------------------- */ 
+  ** --------------------------------------------------------------- */
   if (nin < 1) {
     mexErrMsgTxt("At least one input argument is required.") ;
   } else if (nout > 1) {
     mexErrMsgTxt("Too many output arguments.");
   }
 
-  if (mxGetClassID(in[IN_LABELS]) != mxUINT32_CLASS) {
+  if (mxGetClassID(IN(LABELS)) != mxUINT32_CLASS) {
     mexErrMsgTxt("LABELS must be of class UINT32.") ;
-  }  
-  labelsPt = mxGetData(in[IN_LABELS]) ;
+  }
+  labelsPt = mxGetData(IN(LABELS)) ;
 
-  numDims = mxGetNumberOfDimensions(in[IN_LABELS]) ;
+  numDims = mxGetNumberOfDimensions(IN(LABELS)) ;
   if (numDims > 3) {
     mexErrMsgTxt("LABELS must be a MxNxK array.") ;
   }
 
-  labelsPt = mxGetData(in[IN_LABELS]) ;
-  dimsPt   = mxGetDimensions(in[IN_LABELS]) ;
+  labelsPt = mxGetData(IN(LABELS)) ;
+  dimsPt   = mxGetDimensions(IN(LABELS)) ;
   height   = dimsPt [0] ;
   width    = dimsPt [1] ;
   if (numDims > 2) {
@@ -104,7 +105,7 @@ mexFunction(int nout, mxArray *out[],
     numMaps = 1 ;
   }
 
-  while ((opt = uNextOption(in, nin, options, &nextOpt, &optArg)) >= 0) {
+  while ((opt = vlmxNextOption (in, nin, options, &nextOpt, &optArg)) >= 0) {
     switch (opt) {
     case opt_mass :
       {
@@ -117,29 +118,29 @@ mexFunction(int nout, mxArray *out[],
             ((numDims > 2) && numMaps < dimsPt[2])) {
           mexErrMsgTxt("MASS must have the same dimensions of LABELS.") ;
         }
-        
+
         /* the data is DOUBLE or UINT32 depending on the class of MASS */
-        dataClass = mxGetClassID(optArg) ;         
+        dataClass = mxGetClassID(optArg) ;
         if (dataClass != mxDOUBLE_CLASS &&
             dataClass != mxUINT32_CLASS) {
           mexErrMsgTxt("MASS must be of either class DOUBLE or UINT32.") ;
         }
         break ;
       }
-      
+
     case opt_numLabels :
-      if (!uIsRealScalar(optArg)) {
+      if (!vlmxIsPlainScalar(optArg)) {
         mexErrMsgTxt("NUMLABELS must be a real scalar.") ;
       }
       numLabels = *mxGetPr(optArg) ;
       break ;
-      
+
     case opt_verbose :
       ++ verb ;
       break ;
-      
-    default: 
-      assert(0) ;
+
+    default:
+      abort() ;
     }
   }
 
@@ -155,23 +156,23 @@ mexFunction(int nout, mxArray *out[],
       }
     }
   }
-  
+
   /* Allocate space for the integral histogram */
   dims [0] = height ;
   dims [1] = width ;
   dims [2] = numLabels ;
-  out[OUT_HIST] = mxCreateNumericArray(3, dims, dataClass, mxREAL) ;
-  histPt = mxGetData(out[OUT_HIST]) ;
+  OUT(HIST) = mxCreateNumericArray(3, dims, dataClass, mxREAL) ;
+  histPt = mxGetData(OUT(HIST)) ;
 
   if (verb) {
     mexPrintf("inthist: integrating %d x %d label map with %d labels\n", width, height, numLabels) ;
     mexPrintf("         custom mass map: %s\n", VL_YESNO(massPt)) ;
   }
-  
+
   /* ------------------------------------------------------------------
    *                                                    Distribute data
-   * --------------------------------------------------------------- */ 
-  
+   * --------------------------------------------------------------- */
+
 #define PROCESS(T, INTEGRAL)                                            \
   size_t const K = width*height ;                                       \
   T* dataPt = histPt ;                                                  \
@@ -195,12 +196,12 @@ mexFunction(int nout, mxArray *out[],
     INTEGRAL (dataPt + k*K, height,                                     \
               dataPt + k*K, height, width, height) ;                    \
   }
-  
+
   switch (dataClass) {
   case mxUINT32_CLASS: { PROCESS(vl_uint32, integral_ui) } ; break ;
   case mxDOUBLE_CLASS: { PROCESS(double,    integral_d)  } ; break ;
   default :
-    assert(0) ;
+    abort() ;
   }
 }
 

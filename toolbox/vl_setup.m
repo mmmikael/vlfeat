@@ -7,7 +7,8 @@ function path = vl_setup(varargin)
 %   contain the VL_ prefix. For example, with this option it is
 %   possible to use SIFT() instead of VL_SIFT().
 %
-%   VL_SETUP('TEST') adds VLFeat test functions.
+%   VL_SETUP('TEST') or VL_SETUP('XTEST') adds VLFeat unit test
+%   function suite. See also VL_TEST().
 %
 %   VL_SETUP('QUIET') does not print the greeting message.
 %
@@ -15,28 +16,39 @@ function path = vl_setup(varargin)
 %   Authors:: Andrea Vedaldi and Brian Fulkerson
 
 % AUTORIGHTS
+% Copyright (C) 2007-10 Andrea Vedaldi and Brian Fulkerson
+%
+% This file is part of VLFeat, available under the terms of the
+% GNU GPLv2, or (at your option) any later version.
 
 noprefix = false ;
 quiet = false ;
-test = false ;
+xtest = false ;
 demo = false ;
 
 for ai=1:length(varargin)
   opt = varargin{ai} ;
   switch lower(opt)
-    case {'noprefix', 'usingvl'} 
+    case {'noprefix', 'usingvl'}
       noprefix = true ;
-    case {'test'}
-      test = true ;
+    case {'test', 'xtest'}
+      xtest = true ;
     case {'demo'}
       demo = true ;
     case {'quiet'}
       quiet = true ;
+    otherwise
+      error('Unknown option ''%s''.', opt) ;
   end
 end
 
-bindir = mexext ;
-if strcmp(bindir, 'dll'), bindir = 'mexw32' ; end
+if exist('octave_config_info')
+  bindir = 'octave' ;
+else
+  bindir = mexext ;
+  if strcmp(bindir, 'dll'), bindir = 'mexw32' ; end
+end
+bindir = fullfile('mex',bindir) ;
 
 [a,b,c] = fileparts(mfilename('fullpath')) ;
 [a,b,c] = fileparts(a) ;
@@ -60,16 +72,17 @@ if noprefix
   addpath(fullfile(root,'toolbox','noprefix')) ;
 end
 
-if test
-  addpath(fullfile(root,'toolbox','test')) ;
+if xtest
+  addpath(fullfile(root,'toolbox','xtest')) ;
 end
 
 if demo
   addpath(fullfile(root,'toolbox','demo')) ;
 end
 
-
-fprintf('** Welcome to the VLFeat Toolbox **\n') ;
+if ~quiet
+  fprintf('VLFeat %s ready.\n', vl_version) ;
+end
 
 if nargout == 0
   clear path ;

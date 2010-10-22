@@ -1,28 +1,28 @@
 <!DOCTYPE site PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<site id='root'> 
+<site id='root'>
 
  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
  <!-- Site template                                                -->
  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
  <template id="template.default">
 
-<html>   
+<html>
  <meta>
   <!-- Stylesheets -->
   <link href="%pathto:root;web.css" rel="stylesheet" type="text/css"/>
   <title>VLFeat - %path;</title>
-  %pagestyle; 
-  
+  %pagestyle;
+
   <!-- Scripts-->
   %pagescript;
  </meta>
- 
+
  <!-- Body Start -->
  <body>
   <div id="header">
    <!-- Google CSE Search Box Begins -->
-   <form action=" http://www.vlfeat.org/search.html" id="cse-search-box">
+   <form action="http://www.vlfeat.org/search.html" id="cse-search-box">
     <div>
      <input type="hidden" name="cx" value="003215582122030917471:oq23albfeam" />
      <input type="hidden" name="cof" value="FORID:11" />
@@ -31,9 +31,10 @@
      <input type="submit" name="sa" value="Search" />
     </div>
    </form>
-   <script type="text/javascript" src="http://www.google.com/coop/cse/brand?form=cse-search-box&amp;lang=en"></script>
+   <script type="text/javascript"
+   src="http://www.google.com/coop/cse/brand?form=cse-search-box&amp;lang=en"></script>
    <!-- Google CSE Search Box Ends -->
-   <h1>VLFeat.org</h1>
+   <h1><span id="vlfeat">VLFeat</span><span id="dotorg">.org</span></h1>
   </div>
   <div id="headbanner">
    %path;
@@ -48,9 +49,9 @@
    <div class="clear">&nbsp;</div>
   </div> <!-- pagebody -->
   <div id="footer">
-   &copy; 2005-09 Andrea Vedaldi and Brian Fulkerson
+   &copy; 2005-10 Andrea Vedaldi and Brian Fulkerson
   </div> <!-- footer -->
-  
+
   <!-- Google Analytics Begins -->
   <script type="text/javascript">
    //<![CDATA[
@@ -86,7 +87,7 @@
  <!-- Site contents                                                -->
  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
- <page id="home"    name="index"    title="Home"> <include src="index.html"/>  
+ <page id="home" name="index" title="Home"> <include src="index.html"/>
   <pagestyle>
    #content p.widePar {
      padding-right: 1em ;
@@ -95,7 +96,7 @@
   <page id="about" name="about" title="About"><include src="about.html"/></page>
  </page>
  <page id="download" name="download" title="Download"><include src="download.html"/>
-  <page id="install.matlab" name="install-matlab" title="Matlab install">
+  <page id="install.matlab" name="install-matlab" title="MATLAB install">
    <include src="install-matlab.html"/>
   </page>
   <page id="install.shell" name="install-shell" title="Shell install">
@@ -103,48 +104,71 @@
   </page>
   <page id="install.c" name="install-c" title="C library install">
    <include src="install-c.html"/>
-   <page id="xcode" name="xcode" title="Using Xcode"><include src="using-xcode.html"/></page>
-   <page id="vsexpress" name="vsexpress" title="Using VC++"><include src="using-vsexpress.html"/></page>
+   <page id="xcode" name="xcode" title="Xcode"><include src="using-xcode.html"/></page>
+   <page id="vsexpress" name="vsexpress" title="Visual C++"><include src="using-vsexpress.html"/></page>
+   <page id="gcc" name="gcc" title="g++"><include src="using-gcc.html"/></page>
   </page>
   <page id="compiling" name="compiling" title="Compiling">
    <include src="compiling.html"/>
   </page>
  </page>
 
- <dir name="api">
-  <page id="api" name="index" title="C API">
-   <div class="doxygen">
-    <!-- Doc Here -->
-   </div>
-  </page>
- </dir>
- 
- <dir name="mdoc">
-  <page id="mdoc" name="mdoc" title="Matlab API">
-   <include src="doc/toolbox-src/mdoc.html"/>
-   <include src="doc/toolbox-src/mdoc.xml"/>
-  </page>
- </dir>
+ <page id="doc" name="doc" title="Documentation">
 
- <dir name="man">
-  <page id="man" name="man" title="Man pages">
-   <p>These man pages describe VLFeat command line utilities.</p>
-   <include src="doc/man-src/man.html"/>
-   <include src="doc/man-src/man.xml"/>
-  </page>
- </dir>
+  <include src="doc.html"/>
+
+  <dir name="mdoc">
+   <page id="mdoc" name="mdoc" title="Matlab API">
+    <include src="doc/toolbox-src/mdoc.html"/>
+    <include src="doc/toolbox-src/mdoc.xml"/>
+   </page>
+  </dir>
+
+  <dir name="api">
+   <page id="api" name="index" title="C API">
+    <div class="doxygen">
+     <!-- Doc Here -->
+    </div>
+   </page>
+  </dir>
+
+  <dir name="man">
+   <page id="man" name="man" title="Man pages">
+    <p>These man pages describe VLFeat command line utilities.</p>
+    <include src="doc/man-src/man.html"/>
+    <include src="doc/man-src/man.xml"/>
+   </page>
+  </dir>
+
+ </page>
 
  <dir name="overview">
-  <page id="tut"       name="tut"       title="Tutorials"> 
+  <page id="tut" name="tut" title="Tutorials">
    <include src="tutorials.html"/>
-   <page id="tut.sift"  name="sift"      title="SIFT"> <include src="sift.html"/></page>
-   <page id="tut.mser"  name="mser"      title="MSER"> <include src="mser.html"/></page>
-   <page id="tut.ikm"   name="ikm"       title="IKM">  <include src="ikm.html"/></page>
-   <page id="tut.hikm"  name="hikm"      title="HIKM"> <include src="hikm.html"/></page>
-   <page id="tut.aib"   name="aib"       title="AIB">  <include src="aib.html"/></page>
-   <page id="tut.qs"    name="quickshift" title="Quick shift">  <include src="quickshift.html"/></page>
-   <page id="tut.utils" name="utils"     title="Utils"> <include src="utils.html"/></page>
+   <page id="tut.sift" name="sift" title="SIFT"> <include src="sift.html"/></page>
+   <page id="tut.dsift" name="dsift" title="DSIFT/PHOW"> <include src="dsift.html"/></page>
+   <page id="tut.mser" name="mser" title="MSER"> <include src="mser.html"/></page>
+   <page id="tut.ikm" name="ikm" title="IKM">  <include src="ikm.html"/></page>
+   <page id="tut.hikm" name="hikm" title="HIKM"> <include src="hikm.html"/></page>
+   <page id="tut.aib"  name="aib" title="AIB">  <include src="aib.html"/></page>
+   <page id="tut.qs" name="quickshift" title="Quick shift">  <include src="quickshift.html"/></page>
+   <page id="tut.kdtree"  name="kdtree" title="kd-tree">  <include src="kdtree.html"/></page>
+   <page id="tut.imdisttf" name="imdisttf" title="Distance transf.">  <include src="imdisttf.html"/></page>
+   <page id="tut.utils" name="utils" title="Utils"> <include src="utils.html"/></page>
   </page>
+ </dir>
+
+ <dir name="applications">
+   <page id="apps" name="apps" title="Applications">
+     <include src="apps.html"/>
+     <page id="apps.caltech-101.code" name="caltech-101-code" title="phow_caltech101.m" hide="yes">
+       <pre><include src="../apps/phow_caltech101.m" type="text"/></pre>
+     </page>
+     <page id="apps.sift-mosaic.code" name="sift-mosaic-code" title="sift_mosaic.m" hide="yes">
+       <pre><include src="../apps/sift_mosaic.m" type="text"/></pre>
+     </page>
+
+   </page>
  </dir>
 
  <!-- Generate an additional page to hold search results -->

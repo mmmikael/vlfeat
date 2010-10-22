@@ -3,6 +3,13 @@
 ** description: Rodrigues formula
 **/
 
+/* AUTORIGHTS
+Copyright (C) 2007-10 Andrea Vedaldi and Brian Fulkerson
+
+This file is part of VLFeat, available under the terms of the
+GNU GPLv2, or (at your option) any later version.
+*/
+
 #include <mexutils.h>
 
 #include <vl/generic.h>
@@ -21,8 +28,8 @@ enum {
 **                                                              Driver
 ** ---------------------------------------------------------------- */
 
-void 
-mexFunction(int nout, mxArray *out[], 
+void
+mexFunction(int nout, mxArray *out[],
             int nin, const mxArray *in[])
 {
   int k,K ;
@@ -34,7 +41,7 @@ mexFunction(int nout, mxArray *out[],
     mexErrMsgTxt("Exactly one argument required.") ;
   }
 
-  if(!uIsRealMatrix(in[IN_OM],-1,-1)) {
+  if(!vlmxIsMatrix(in[IN_OM],-1,-1)) {
     mexErrMsgTxt("OM must be a DOUBLE array") ;
   }
 
@@ -76,5 +83,5 @@ mexFunction(int nout, mxArray *out[],
     om_pt += 3 ;
     R_pt  += 3*3 ;
     dR_pt += 9*3 ;
-  }  
+  }
 }

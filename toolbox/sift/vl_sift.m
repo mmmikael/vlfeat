@@ -9,65 +9,61 @@
 %   column of D is the descriptor of the corresponding frame in F. A
 %   descriptor is a 128-dimensional vector of class UINT8.
 %
-%   Options:
+%   VL_SIFT() accepts the following options:
 %
-%   Octaves::
+%   Octaves:: [maximum possible]
 %     Set the number of octave of the DoG scale space.
 %
-%   Levels::
+%   Levels:: [3]
 %     Set the number of levels per octave of the DoG scale space.
-%     The default value is 3.
 %
-%   FirstOctave::
+%   FirstOctave:: [0]
 %     Set the index of the first octave of the DoG scale space.
-%     The default value is 0.
 %
-%   PeakThresh::
+%   PeakThresh:: [0]
 %     Set the peak selection threshold.
-%     The default value is 0.
 %
-%   EdgeThresh::
+%   EdgeThresh:: [10]
 %     Set the non-edge selection threshold.
-%     The default value is 10.
 %
-%   NormThresh::
-%     Set the minimum l2-norm of the descriptor before
-%     normalization. Descriptors below the threshold are set to
-%     zero.
+%   NormThresh:: [-inf]
+%     Set the minimum l2-norm of the descriptors before
+%     normalization. Descriptors below the threshold are set to zero.
 %
-%   Magnif::
+%   Magnif:: [3]
 %     Set the descriptor magnification factor. The scale of the
 %     keypoint is multiplied by this factor to obtain the width (in
 %     pixels) of the spatial bins. For instance, if there are there
 %     are 4 spatial bins along each spatial direction, the
-%     ``diameter'' of the descriptor is approximatively 4 * MAGNIF.
-%     The default value is 3.
+%     ``side'' of the descriptor is approximatively 4 * MAGNIF.
 %
-%   WindowSize::
+%   WindowSize:: [2]
 %     Set the variance of the Gaussian window that determines the
 %     descriptor support. It is expressend in units of spatial
-%     bins and the default value is 2.
+%     bins.
 %
-%   Frames::
-%     Set the frames to use (bypass the detector). If frames are not
-%     passed in order of increasing scale, they are re-orderded.
+%   Frames:: [not specified]
+%     If specified, set the frames to use (bypass the detector). If
+%     frames are not passed in order of increasing scale, they are
+%     re-orderded.
 %
 %   Orientations::
-%     Compute the orietantions of the frames overriding the 
-%     orientation specified by the 'Frames' option.
+%     If specified, compute the orietantions of the frames overriding
+%     the orientation specified by the 'Frames' option.
 %
 %   Verbose::
-%     Be verbose (may be repeated to increase the verbosity level).
+%     If specfified, be verbose (may be repeated to increase the
+%     verbosity level).
 %
-%  REFERENCES
-% 
-%  [1] D. G. Lowe, Distinctive image features from scale-invariant
+%   REFERENCES
+%
+%   [1] D. G. Lowe, Distinctive image features from scale-invariant
 %       keypoints. IJCV, vol. 2, no. 60, pp. 91-110, 2004.
 %
-%  See also VL_HELP(), VL_UBCMATCH().
+%   See also:: VL_HELP(), VL_UBCMATCH(), VL_DSIFT().
 
 % AUTORIGHTS
-% Copyright 2007 (c) Andrea Vedaldi and Brian Fulkerson
-% 
-% This file is part of VLFeat, available in the terms of the GNU
-% General Public License version 2.
+% Copyright (C) 2007-10 Andrea Vedaldi and Brian Fulkerson
+%
+% This file is part of VLFeat, available under the terms of the
+% GNU GPLv2, or (at your option) any later version.

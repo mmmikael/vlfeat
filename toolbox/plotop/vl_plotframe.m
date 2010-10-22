@@ -36,13 +36,13 @@ function h=vl_plotframe(frames,varargin)
 %  plot function. The first optional argument can be a line
 %  specification string such as the one used by PLOT().
 %
-%  See also:: VL_HELP().
+%  See also: VL_HELP().
 
 % AUTORIGHTS
-% Copyright 2007 (c) Andrea Vedaldi and Brian Fulkerson
-% 
-% This file is part of VLFeat, available in the terms of the GNU
-% General Public License version 2.
+% Copyright (C) 2007-10 Andrea Vedaldi and Brian Fulkerson
+%
+% This file is part of VLFeat, available under the terms of the
+% GNU GPLv2, or (at your option) any later version.
 
 % number of vertices drawn for each frame
 np        = 40 ;

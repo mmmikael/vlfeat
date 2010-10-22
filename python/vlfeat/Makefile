@@ -17,17 +17,18 @@ $(VLFEAT_DIR)/hikmeans.c \
 $(VLFEAT_DIR)/ikmeans.c \
 $(VLFEAT_DIR)/imopv.c \
 $(VLFEAT_DIR)/mathop.c \
+$(VLFEAT_DIR)/mathop_sse2.c \
 $(VLFEAT_DIR)/pgm.c \
 $(VLFEAT_DIR)/rodrigues.c \
 $(VLFEAT_DIR)/stringop.c \
 $(VLFEAT_DIR)/getopt_long.c \
 $(VLFEAT_DIR)/host.c \
-$(VLFEAT_DIR)/imop.c \
 $(VLFEAT_DIR)/imopv_sse2.c \
 $(VLFEAT_DIR)/mser.c \
 $(VLFEAT_DIR)/random.c \
 $(VLFEAT_DIR)/sift.c \
 $(VLFEAT_DIR)/dsift.c \
+$(VLFEAT_DIR)/quickshift.c \
 
 SOURCES_CPP = \
 mser/vl_erfill.cpp \
@@ -41,10 +42,11 @@ kmeans/vl_hikmeans.cpp \
 kmeans/vl_ikmeans.cpp \
 kmeans/vl_hikmeanspush.cpp \
 kmeans/vl_ikmeanspush.cpp \
+quickshift/vl_quickshift.cpp \
 py_vlfeat.cpp
 
-CFLAGS += -I$(VLFEAT_DIR)/../  -I/usr/include/python2.5
-LFLAGS += -m32 -msse -shared 
+CFLAGS += -I$(VLFEAT_DIR)/../  -I/usr/include/python2.6 -fPIC -msse2 -O2
+LFLAGS += -msse -shared 
 
 OBJS_C=$(SOURCES_C:.c=.o)
 OBJS_CPP=$(SOURCES_CPP:.cpp=.o)
@@ -72,6 +74,6 @@ clean:
 ##################################################
 
 $(LIBRARY): $(OBJS)
-	$(CXX) -o $@ $^ $(LFLAGS) -lboost_python-mt-py25
+	$(CXX) -o $@ $^ $(LFLAGS) -lboost_python-mt-py26
 
 ##################################################

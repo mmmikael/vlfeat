@@ -234,7 +234,7 @@ PyObject * vl_imsmooth_python(PyArrayObject & image, double sigma)
 #undef VL_IMCONVCOLTRI
 #define FLT float
 #define VL_IMCONVCOL vl_imconvcol_vf
-#define VL_IMCONVCOLTRI vl_imconvcoltri_vf
+#define VL_IMCONVCOLTRI vl_imconvcoltri_f
 #include "imsmooth.tc"
 //		break;
 //	case mxDOUBLE_CLASS:

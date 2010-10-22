@@ -370,7 +370,7 @@ vl_pgm_insert(FILE* f, VlPgmImage const *im, void const *data)
 #if defined(VL_ARCH_LITTLE_ENDIAN)
   if (bpp == 2) {
     int i ;
-    vl_uint8* temp = (vl_uint8*) vl_malloc (2 * data_size) ;
+    vl_uint8* temp = vl_malloc (2 * data_size) ;
     memcpy(temp, data, 2 * data_size) ;
     for(i = 0 ; i < 2 * data_size ; i += 2) {
       vl_uint8 tmp = temp [i] ;
@@ -484,7 +484,7 @@ int vl_pgm_read_new_f (char const *name,  VlPgmImage *im, float** data)
   }
 
   npixels = vl_pgm_get_npixels(im) ;
-  *data = (float*) vl_malloc (sizeof(float) * npixels) ;
+  *data = vl_malloc (sizeof(float) * npixels) ;
   {
     size_t k ;
     float scale = 1.0f / im->max_value ;

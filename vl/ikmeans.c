@@ -104,7 +104,7 @@ static void    vl_ikm_push_elkan      (VlIKMFilt*, vl_uint*, vl_uint8 const*, in
 VlIKMFilt *
 vl_ikm_new (int method)
 {
-  VlIKMFilt *f =  (VlIKMFilt *) vl_malloc (sizeof(VlIKMFilt)) ;
+  VlIKMFilt *f =  vl_malloc (sizeof(VlIKMFilt)) ;
   f -> centers = 0 ;
   f -> inter_dist = 0 ;
 

@@ -35,11 +35,11 @@ vl_ikm_train_lloyd (VlIKMFilt* f, vl_uint8 const* data, int N)
   int iter, i, j, k,
     K = f-> K,
     M = f-> M,
-    err =  0 ;  
-  vl_ikm_acc *centers = f->centers ;  
-  vl_uint    *asgn    = (vl_uint*) vl_malloc (sizeof(vl_uint) * N) ;
-  vl_uint    *counts  = (vl_uint*) vl_malloc (sizeof(vl_uint) * N) ;
-  
+    err =  0 ;
+  vl_ikm_acc *centers = f->centers ;
+  vl_uint    *asgn    = vl_malloc (sizeof(vl_uint) * N) ;
+  vl_uint    *counts  = vl_malloc (sizeof(vl_uint) * N) ;
+
   for (iter = 0 ; 1 ; ++ iter) {
     vl_bool done = 1 ;
 

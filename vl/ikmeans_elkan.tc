@@ -70,7 +70,7 @@ vl_ikm_init_elkan (VlIKMFilt *f)
   if (f-> inter_dist) {
     vl_free (f->  inter_dist) ;
   }
-  f-> inter_dist = (vl_ikm_acc*) vl_malloc (sizeof(vl_ikm_acc) * f->K*f->K) ;  
+  f-> inter_dist = vl_malloc (sizeof(vl_ikm_acc) * f->K*f->K) ;  
   vl_ikm_elkan_update_inter_dist (f) ;
 }
 
@@ -93,14 +93,14 @@ vl_ikm_train_elkan (VlIKMFilt* f, vl_uint8 const* data, int N)
     M = f-> M ;
   
   vl_ikm_acc  dist ;
-  vl_ikm_acc *m_pt = (vl_ikm_acc*) vl_malloc(sizeof(vl_ikm_acc)* M*K) ; /* new centers (temp)    */
-  vl_ikm_acc *u_pt = (vl_ikm_acc*) vl_malloc(sizeof(vl_ikm_acc)*   N) ; /* upper bound (may str) */
-  char       *r_pt = (char*) vl_malloc(sizeof(char)      * 1*N) ; /* flag: u is strict     */
-  vl_ikm_acc *s_pt = (vl_ikm_acc*) vl_malloc(sizeof(vl_ikm_acc)*   K) ; /* min cluster dist.     */
-  vl_ikm_acc *l_pt = (vl_ikm_acc*) vl_malloc(sizeof(vl_ikm_acc)* N*K) ; /* lower bound           */
-  vl_ikm_acc *d_pt = (vl_ikm_acc*) f-> inter_dist ;                     /* half inter clst dist  */
-  vl_uint    *asgn = (vl_uint*) vl_malloc (sizeof(vl_uint) * N) ;
-  vl_uint    *counts= (vl_uint*) vl_malloc (sizeof(vl_uint) * N) ;
+  vl_ikm_acc *m_pt = vl_malloc(sizeof(vl_ikm_acc)* M*K) ; /* new centers (temp)    */
+  vl_ikm_acc *u_pt = vl_malloc(sizeof(vl_ikm_acc)*   N) ; /* upper bound (may str) */
+  char       *r_pt = vl_malloc(sizeof(char)      * 1*N) ; /* flag: u is strict     */
+  vl_ikm_acc *s_pt = vl_malloc(sizeof(vl_ikm_acc)*   K) ; /* min cluster dist.     */
+  vl_ikm_acc *l_pt = vl_malloc(sizeof(vl_ikm_acc)* N*K) ; /* lower bound           */
+  vl_ikm_acc *d_pt = f-> inter_dist ;                     /* half inter clst dist  */
+  vl_uint    *asgn = vl_malloc (sizeof(vl_uint) * N) ;
+  vl_uint    *counts=vl_malloc (sizeof(vl_uint) * N) ;
   
   int done = 0 ;
   

@@ -286,13 +286,13 @@ vl_mser_new (int ndims, int const* dims)
   VlMserFilt* f ;
   int *strides, k ;
 
-  f = (VlMserFilt*) vl_calloc (sizeof(VlMserFilt), 1) ;
+  f = vl_calloc (sizeof(VlMserFilt), 1) ;
 
   f-> ndims   = ndims ;
-  f-> dims    = (int*) vl_malloc (sizeof(int) * ndims) ;
-  f-> subs    = (int*) vl_malloc (sizeof(int) * ndims) ;
-  f-> dsubs   = (int*) vl_malloc (sizeof(int) * ndims) ;
-  f-> strides = (int*) vl_malloc (sizeof(int) * ndims) ;
+  f-> dims    = vl_malloc (sizeof(int) * ndims) ;
+  f-> subs    = vl_malloc (sizeof(int) * ndims) ;
+  f-> dsubs   = vl_malloc (sizeof(int) * ndims) ;
+  f-> strides = vl_malloc (sizeof(int) * ndims) ;
 
   /* shortcuts */
   strides = f-> strides ;
@@ -315,9 +315,9 @@ vl_mser_new (int ndims, int const* dims)
   f-> dof = ndims * (ndims + 1) / 2 + ndims ;
 
   /* more buffers */
-  f-> perm   = (vl_uint*) vl_malloc (sizeof(vl_uint)   * f-> nel) ;
-  f-> joins  = (vl_uint*) vl_malloc (sizeof(vl_uint)   * f-> nel) ;
-  f-> r      = (VlMserReg*) vl_malloc (sizeof(VlMserReg) * f-> nel) ;
+  f-> perm   = vl_malloc (sizeof(vl_uint)   * f-> nel) ;
+  f-> joins  = vl_malloc (sizeof(vl_uint)   * f-> nel) ;
+  f-> r      = vl_malloc (sizeof(VlMserReg) * f-> nel) ;
 
   f-> er     = 0 ;
   f-> rer    = 0 ;
@@ -620,7 +620,7 @@ vl_mser_process (VlMserFilt* f, vl_mser_pix const* im)
   /* make room */
   if (f-> rer < ner) {
     if (er) vl_free (er) ;
-    f->er  = er = (VlMserExtrReg*) vl_malloc (sizeof(VlMserExtrReg) * ner) ;
+    f->er  = er = vl_malloc (sizeof(VlMserExtrReg) * ner) ;
     f->rer = ner ;      
   } ;
 
@@ -825,7 +825,7 @@ vl_mser_process (VlMserFilt* f, vl_mser_pix const* im)
   /* make room */
   if (f-> rmer < nmer) {
     if (mer) vl_free (mer) ;
-    f->mer  = mer = (vl_uint*) vl_malloc( sizeof(vl_uint) * nmer) ;
+    f->mer  = mer = vl_malloc( sizeof(vl_uint) * nmer) ;
     f->rmer = nmer ;      
   }
 
@@ -872,12 +872,12 @@ vl_mser_ell_fit (VlMserFilt* f)
   /* make room */
   if (f->rell < f->nmer) {
     if (f->ell) vl_free (f->ell) ;
-    f->ell  = (float*) vl_malloc (sizeof(float) * f->nmer * f->dof) ;
+    f->ell  = vl_malloc (sizeof(float) * f->nmer * f->dof) ;
     f->rell = f-> nmer ;
   }
 
   if (f->acc == 0) {
-    f->acc = (float*) vl_malloc (sizeof(float) * f->nel) ;
+    f->acc = vl_malloc (sizeof(float) * f->nel) ;
   }
  
   acc = f-> acc ;

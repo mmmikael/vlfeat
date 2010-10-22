@@ -894,7 +894,7 @@ vl_sift_new (int width, int height,
              int noctaves, int nlevels,
              int o_min)
 {
-  VlSiftFilt *f = (VlSiftFilt *) vl_malloc (sizeof(VlSiftFilt)) ;
+  VlSiftFilt *f = vl_malloc (sizeof(VlSiftFilt)) ;
 
   int w   = VL_SHIFT_LEFT (width,  -o_min) ;
   int h   = VL_SHIFT_LEFT (height, -o_min) ;

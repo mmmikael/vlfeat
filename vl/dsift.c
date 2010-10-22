@@ -258,7 +258,7 @@ float *
 _vl_dsift_new_kernel (int binSize, int numBins, int binIndex, double windowSize)
 {
   int filtLen = 2 * binSize - 1 ;
-  float * ker = (float*) vl_malloc (sizeof(float) * filtLen) ;
+  float * ker = vl_malloc (sizeof(float) * filtLen) ;
   float * kerIter = ker ;
   float delta = binSize * (binIndex - 0.5F * (numBins - 1)) ;
   /*
@@ -395,6 +395,7 @@ _vl_dsift_alloc_buffers (VlDsiftFilter* self)
       int t ;
 
       _vl_dsift_free_buffers(self) ;
+
       self->frames = vl_malloc(sizeof(VlDsiftKeypoint) * numFrameAlloc) ;
       self->descrs = vl_malloc(sizeof(float) * numBinAlloc * numFrameAlloc) ;
       self->grads  = vl_malloc(sizeof(float*) * numGradAlloc) ;
@@ -442,8 +443,8 @@ vl_dsift_new (int imWidth, int imHeight)
   self->useFlatWindow = VL_FALSE ;
   self->windowSize = 2.0 ;
 
-  self->convTmp1 = (float*) vl_malloc(sizeof(float) * self->imWidth * self->imHeight) ;
-  self->convTmp2 = (float*) vl_malloc(sizeof(float) * self->imWidth * self->imHeight) ;
+  self->convTmp1 = vl_malloc(sizeof(float) * self->imWidth * self->imHeight) ;
+  self->convTmp2 = vl_malloc(sizeof(float) * self->imWidth * self->imHeight) ;
 
   self->numBinAlloc = 0 ;
   self->numFrameAlloc = 0 ;

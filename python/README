@@ -28,13 +28,17 @@ COMPILING
   This should generate a dynamic library file _vlfeat.so in the directory vlfeat/ 
 
 TESTING
-  To run the python tests, you need to have numpy, pylab and PIL installed:
+  To run the python tests, you need to have numpy, pylab and PIL installed.
+
+  For the quickshift functions, you need numpy in version 1.4 or later.
+  For Ubuntu users, these can be obtained from a ppa.
+  Add the "martoss" ppa to your apt sources:
+  > sudo apt-add-repository ppa:martoss
+  Install needed packages:
   > sudo apt-get install python-numpy
   > sudo apt-get install python-matplotlib
   > sudo apt-get install python-imaging
 	
-  For the quickshift functions, you need numpy in version 1.4 or later.
-
   Then, you need to set the system variable to where is README is located:
   > export PYTHONPATH="path to this README"
 

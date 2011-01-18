@@ -70,7 +70,7 @@ vl_hikm_copy_subset (vl_uint8 const * data,
   
   /* copy each datum to the buffer */
   {
-    vl_uint8 * new_data = vl_malloc (sizeof(vl_uint8) * M * count);    
+    vl_uint8 * new_data = (vl_uint8 *) vl_malloc (sizeof(vl_uint8) * M * count);    
     count = 0;
     for (i = 0 ; i < N ; i ++)
       if (ids[i] == id)
@@ -104,11 +104,11 @@ xmeans (VlHIKMTree *tree,
         vl_uint8 const *data, 
         int N, int K, int height)
 {
-  VlHIKMNode *node = vl_malloc (sizeof(VlHIKMNode)) ;
-  vl_uint     *ids = vl_malloc (sizeof(vl_uint) * N) ;
+  VlHIKMNode *node = (VlHIKMNode *) vl_malloc (sizeof(VlHIKMNode)) ;
+  vl_uint     *ids = (vl_uint*) vl_malloc (sizeof(vl_uint) * N) ;
 
   node-> filter   = vl_ikm_new (tree -> method) ;    
-  node-> children = (height == 1) ? 0 : vl_malloc (sizeof(VlHIKMNode*) * K) ;
+  node-> children = (height == 1) ? 0 : (VlHIKMNode**) vl_malloc (sizeof(VlHIKMNode*) * K) ;
 
   vl_ikm_set_max_niters (node->filter, tree->max_niters) ;
   vl_ikm_set_verbosity  (node->filter, tree->verb - 1  ) ;
@@ -181,7 +181,7 @@ VL_EXPORT
 VlHIKMTree *
 vl_hikm_new (int method)
 {
-  VlHIKMTree *f = vl_malloc (sizeof(VlHIKMTree)) ;
+  VlHIKMTree *f = (VlHIKMTree *) vl_malloc (sizeof(VlHIKMTree)) ;
   f -> M          = 0 ;
   f -> K          = 0 ;
   f -> max_niters = 200 ;

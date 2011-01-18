@@ -258,7 +258,7 @@ float *
 _vl_dsift_new_kernel (int binSize, int numBins, int binIndex, double windowSize)
 {
   int filtLen = 2 * binSize - 1 ;
-  float * ker = vl_malloc (sizeof(float) * filtLen) ;
+  float * ker = (float*) vl_malloc (sizeof(float) * filtLen) ;
   float * kerIter = ker ;
   float delta = binSize * (binIndex - 0.5F * (numBins - 1)) ;
   /*
@@ -396,12 +396,12 @@ _vl_dsift_alloc_buffers (VlDsiftFilter* self)
 
       _vl_dsift_free_buffers(self) ;
 
-      self->frames = vl_malloc(sizeof(VlDsiftKeypoint) * numFrameAlloc) ;
-      self->descrs = vl_malloc(sizeof(float) * numBinAlloc * numFrameAlloc) ;
-      self->grads  = vl_malloc(sizeof(float*) * numGradAlloc) ;
+      self->frames = (VlDsiftKeypoint*) vl_malloc(sizeof(VlDsiftKeypoint) * numFrameAlloc) ;
+      self->descrs = (float*) vl_malloc(sizeof(float) * numBinAlloc * numFrameAlloc) ;
+      self->grads  = (float**) vl_malloc(sizeof(float*) * numGradAlloc) ;
       for (t = 0 ; t < numGradAlloc ; ++t) {
         self->grads[t] =
-          vl_malloc(sizeof(float) * self->imWidth * self->imHeight) ;
+          (float*) vl_malloc(sizeof(float) * self->imWidth * self->imHeight) ;
       }
       self->numBinAlloc = numBinAlloc ;
       self->numGradAlloc = numGradAlloc ;
@@ -422,7 +422,7 @@ _vl_dsift_alloc_buffers (VlDsiftFilter* self)
 VL_EXPORT VlDsiftFilter *
 vl_dsift_new (int imWidth, int imHeight)
 {
-  VlDsiftFilter * self = vl_malloc (sizeof(VlDsiftFilter)) ;
+  VlDsiftFilter* self = (VlDsiftFilter*) vl_malloc (sizeof(VlDsiftFilter)) ;    
   self->imWidth  = imWidth ;
   self->imHeight = imHeight ;
 
@@ -443,8 +443,8 @@ vl_dsift_new (int imWidth, int imHeight)
   self->useFlatWindow = VL_FALSE ;
   self->windowSize = 2.0 ;
 
-  self->convTmp1 = vl_malloc(sizeof(float) * self->imWidth * self->imHeight) ;
-  self->convTmp2 = vl_malloc(sizeof(float) * self->imWidth * self->imHeight) ;
+  self->convTmp1 = (float*) vl_malloc(sizeof(float) * self->imWidth * self->imHeight) ;
+  self->convTmp2 = (float*) vl_malloc(sizeof(float) * self->imWidth * self->imHeight) ;
 
   self->numBinAlloc = 0 ;
   self->numFrameAlloc = 0 ;

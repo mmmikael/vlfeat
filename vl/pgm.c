@@ -370,7 +370,7 @@ vl_pgm_insert(FILE* f, VlPgmImage const *im, void const *data)
 #if defined(VL_ARCH_LITTLE_ENDIAN)
   if (bpp == 2) {
     int i ;
-    vl_uint8* temp = vl_malloc (2 * data_size) ;
+    vl_uint8* temp = (vl_uint8*) vl_malloc (2 * data_size) ;
     memcpy(temp, data, 2 * data_size) ;
     for(i = 0 ; i < 2 * data_size ; i += 2) {
       vl_uint8 tmp = temp [i] ;
@@ -440,7 +440,7 @@ int vl_pgm_read_new (char const *name, VlPgmImage *im, vl_uint8** data)
     return (threadState->lastError =  VL_ERR_BAD_ARG) ;
   }
 
-  *data = vl_malloc (vl_pgm_get_npixels(im) * sizeof(vl_uint8)) ;
+  *data = (vl_uint8*) vl_malloc (vl_pgm_get_npixels(im) * sizeof(vl_uint8)) ;
   err = vl_pgm_extract_data(f, im, *data) ;
 
   if (err) {
@@ -484,7 +484,7 @@ int vl_pgm_read_new_f (char const *name,  VlPgmImage *im, float** data)
   }
 
   npixels = vl_pgm_get_npixels(im) ;
-  *data = vl_malloc (sizeof(float) * npixels) ;
+  *data = (float*) vl_malloc (sizeof(float) * npixels) ;
   {
     size_t k ;
     float scale = 1.0f / im->max_value ;
@@ -561,7 +561,7 @@ int vl_pgm_write_f (char const *name, float const* data, int width, int height)
   float max = - VL_INFINITY_F ;
   float scale ;
 
-  vl_uint8 * buffer = vl_malloc (sizeof(float) * width * height) ;
+  vl_uint8 * buffer = (vl_uint8*) vl_malloc (sizeof(float) * width * height) ;
 
   for (k = 0 ; k < width * height ; ++k) {
     min = VL_MIN(min, data [k]) ;

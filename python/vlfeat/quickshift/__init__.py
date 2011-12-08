@@ -1,8 +1,7 @@
-import numpy
-import sys
+import numpy as np
 from .. import _vlfeat
 
-from vlfeat.misc.colorspaces import *
+from vlfeat.misc.colorspaces import vl_xyz2lab, vl_rgb2xyz
 
 eps=1e-10
 
@@ -16,17 +15,17 @@ def vl_flatmap(tree):
     shape=list(tree.shape)
     shape.reverse()
     tree=tree.flatten("F")
-    i=0 
+    i=0
     while 1:
         i=i+1
-        tree_ = tree[tree] 
+        tree_ = tree[tree]
         if (tree_==tree).all():
             break
-        tree= tree_ 
-    drop,clusters=numpy.unique(tree, return_inverse=True)
+        tree= tree_
+    drop,clusters=np.unique(tree, return_inverse=True)
     tree=tree.reshape(shape).T
     clusters=clusters.reshape(shape).T
-    return tree,clusters 
+    return tree,clusters
 
 
 def vl_quickshift(image, sigma,maxdist=None,medoid=False):
@@ -40,9 +39,9 @@ def vl_quickshift(image, sigma,maxdist=None,medoid=False):
         maxdist=3*sigma
     q = _vlfeat.vl_quickshift_new(image, N1, N2, K)
 
-    _vlfeat.vl_quickshift_set_kernel_size (q, sigma) 
-    _vlfeat.vl_quickshift_set_max_dist     (q, maxdist) 
-    _vlfeat.vl_quickshift_set_medoid      (q, medoid) 
+    _vlfeat.vl_quickshift_set_kernel_size (q, sigma)
+    _vlfeat.vl_quickshift_set_max_dist     (q, maxdist)
+    _vlfeat.vl_quickshift_set_medoid      (q, medoid)
 
     _vlfeat.vl_quickshift_process(q)
 
@@ -54,24 +53,26 @@ def vl_quickshift(image, sigma,maxdist=None,medoid=False):
     #_vlfeat.vl_quickshift_delete(q)
     return [parents,dists,density]
 
+
 def vl_imseg(I,labels):
     """Color an image based on the segmentation
-    ISEG = IMSEG(I,LABELS) Labels ISEG with the average color from I of 
+    ISEG = IMSEG(I,LABELS) Labels ISEG with the average color from I of
     each cluster indicated by LABELS
     """
 
     [M,N,K] = I.shape
     Q = 0*I
     for k in xrange(0,K):
-        acc = numpy.zeros((M,N))
-        nrm = numpy.zeros((M,N))
-        acc = numpy.bincount(labels.flatten(), weights=I[:,:,k].flatten())
-        nrm = numpy.bincount(labels.flatten(),weights=numpy.ones((M,N)).flatten())
+        acc = np.zeros((M,N))
+        nrm = np.zeros((M,N))
+        acc = np.bincount(labels.flatten(), weights=I[:,:,k].flatten())
+        nrm = np.bincount(labels.flatten(),weights=np.ones((M,N)).flatten())
         acc = acc / (nrm+eps)
         Q[:,:,k] = acc[labels]
 
     Q[Q>1]=1
     return Q
+
 
 def vl_quickseg(
         image,
@@ -85,10 +86,10 @@ def vl_quickseg(
     @param maxdist      Maximum distance between modes to be joined into one segment
     """
     if not image.flags['F_CONTIGUOUS']:
-        image = numpy.array(image, order='F')		
+        image = np.array(image, order='F')
 
     # break ties on uniform areas:
-    image = image + numpy.random.uniform(0,1,image.shape)/2550
+    image = image + np.random.uniform(0,1,image.shape)/2550
 
     if image.shape[2] == 1:
       imagex = ratio * image
@@ -99,17 +100,18 @@ def vl_quickseg(
     # Perform quickshift to obtain the segmentation tree, which is already cut by
     # maxdist. If a pixel has no nearest neighbor which increases the density, its
     # parent in the tree is itself, and gaps is inf.
-    mapping,gaps,E = vl_quickshift(imagex.copy('F'), kernelsize, maxdist) 
+    mapping,gaps,E = vl_quickshift(imagex.copy('F'), kernelsize, maxdist)
 
     # Follow the parents of the tree until we have reached the root nodes
     # mapped: a labeled segmentation where the labels are the indicies of the modes
     # in the original image.
     # labels: mapped after having been renumbered 1:nclusters and reshaped into a
     # vector
-    mapped, labels = vl_flatmap(mapping) 
+    mapped, labels = vl_flatmap(mapping)
     # imseg builds an average description of the region by color
     Iseg=vl_imseg(image, labels)
     return [Iseg, labels,mapping,gaps,E]
+
 
 def vl_quickvis(I, ratio, kernelsize, maxdist, maxcuts=None):
     """ Create an edge image from a Quickshift segmentation.
@@ -118,12 +120,12 @@ def vl_quickvis(I, ratio, kernelsize, maxdist, maxcuts=None):
     between color consistency and spatial consistency (See VL_QUICKSEG) and
     KERNELSIZE controls the bandwidth of the density estimator (See VL_QUICKSEG,
     VL_QUICKSHIFT). MAXDIST is the maximum distance between neighbors which
-    increase the density. 
+    increase the density.
 
     VL_QUICKVIS takes at most MAXCUTS thresholds less than MAXDIST, forming at
     most MAXCUTS segmentations. The edges between regions in each of these
     segmentations are labeled in IEDGE, where the label corresponds to the
-    largest DIST which preserves the edge. 
+    largest DIST which preserves the edge.
 
     [IEDGE,DISTS] = VL_QUICKVIS(I, RATIO, KERNELSIZE, MAXDIST, MAXCUTS) also
     returns the DIST thresholds that were chosen.
@@ -137,33 +139,33 @@ def vl_quickvis(I, ratio, kernelsize, maxdist, maxcuts=None):
     See Also: VL_QUICKSHIFT, VL_QUICKSEG
     """
     if not I.flags['F_CONTIGUOUS']:
-        I = numpy.array(I, order='F')		
+        I = np.array(I, order='F')
 
-    if maxcuts == None: 
+    if maxcuts == None:
         dists = maxdist;
-        maxdist = numpy.max(dists);
+        maxdist = np.max(dists);
         Iseg, labels, mapping, gaps, E = vl_quickseg(I, ratio, kernelsize, maxdist)
     else:
         Iseg, labels, mapping, gaps, E = vl_quickseg(I, ratio, kernelsize, maxdist)
-        dists = numpy.unique(numpy.floor(gaps.flatten()))
+        dists = np.unique(np.floor(gaps.flatten()))
         dists = dists[1:-1]  # remove the inf thresh and the lowest level thresh
         if len(dists) > maxcuts:
-            ind = [int(x) for x in numpy.round(numpy.linspace(0,len(dists)-1, maxcuts))]
+            ind = [int(x) for x in np.round(np.linspace(0,len(dists)-1, maxcuts))]
             dists = dists[ind]
     Iedge, dists = mapvis(mapping, gaps, dists)
-    return [Iedge, dists, mapping, gaps] 
+    return [Iedge, dists, mapping, gaps]
 
 
 def mapvis(mapping, gaps, maxdist, maxcuts=None):
     """Create an edge image from a Quickshift segmentation.
     IEDGE = MAPVIS(MAP, GAPS, MAXDIST, MAXCUTS) creates an edge
     stability image from a Quickshift segmentation. MAXDIST is the maximum
-    distance between neighbors which increase the density. 
+    distance between neighbors which increase the density.
 
     MAPVIS takes at most MAXCUTS thresholds less than MAXDIST, forming at most
     MAXCUTS segmentations. The edges between regions in each of these
     segmentations are labeled in IEDGE, where the label corresponds to the
-    largest DIST which preserves the edge. 
+    largest DIST which preserves the edge.
 
     [IEDGE,DISTS] = MAPVIS(MAP, GAPS, MAXDIST, MAXCUTS) also returns the DIST
     thresholds that were chosen.
@@ -176,36 +178,36 @@ def mapvis(mapping, gaps, maxdist, maxcuts=None):
         dists = maxdist
         maxdist = max(dists)
     else:
-        dists = unique(floor(gaps[:]))
+        dists = np.unique(np.floor(gaps[:]))
         dists = dists[1:-1] # remove the inf thresh and the lowest level thresh
         # throw away min region size instead of maxdist?
         dists = dists(dists<maxdist)
         if len(dists) > maxcuts:
-            ind = round(linspace(1,len(dists), maxcuts))
+            ind = round(np.linspace(1,len(dists), maxcuts))
             dists = dists(ind)
 
-    Iedge = numpy.zeros(mapping.shape)
+    Iedge = np.zeros(mapping.shape)
 
     for i in xrange(len(dists)):
         mapdist = mapping.flatten("F")
-        s=numpy.where((gaps.flatten("F")>=dists[i]))
+        s=np.where((gaps.flatten("F")>=dists[i]))
         mapdist[s] = s
         mapdist=mapdist.reshape(mapping.shape[1],mapping.shape[0]).T
         mapped,labels = vl_flatmap(mapdist)
-        print('%d/%d %d regions\n'%(i, len(dists), len(numpy.unique(mapped))))
+        print('%d/%d %d regions\n'%(i, len(dists), len(np.unique(mapped))))
 
         borders = getborders(mapped);
-        
         Iedge[borders] = dists[i];
         #Iedge[borders] = Iedge[borders] + 1;
         #Iedge[borders] = i;
-    return [Iedge, dists] 
+    return [Iedge, dists]
+
 
 def getborders(mapping):
     """ Get edges within an image by calculating image derivatives
     """
     from scipy.signal import convolve2d
-    dx = convolve2d(mapping, numpy.array([[-1, 1]]), 'same')
-    dy = convolve2d(mapping, numpy.array([[-1, 1]]).T, 'same')
+    dx = convolve2d(mapping, np.array([[-1, 1]]), 'same')
+    dy = convolve2d(mapping, np.array([[-1, 1]]).T, 'same')
     borders = (dx != 0)+( dy != 0)
     return borders

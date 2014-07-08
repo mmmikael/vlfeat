@@ -25,12 +25,13 @@ SOURCES_C = [
 	VLFEAT_DIR + '/stringop.c',
 	VLFEAT_DIR + '/getopt_long.c',
 	VLFEAT_DIR + '/host.c',
-	VLFEAT_DIR + '/imop.c',
 	VLFEAT_DIR + '/imopv_sse2.c',
 	VLFEAT_DIR + '/mser.c',
 	VLFEAT_DIR + '/random.c',
 	VLFEAT_DIR + '/sift.c',
 	VLFEAT_DIR + '/dsift.c',	
+	VLFEAT_DIR + '/quickshift.c',
+	VLFEAT_DIR + '/mathop_sse2.c'
 	]
 
 SOURCES_CPP = [
@@ -45,6 +46,7 @@ SOURCES_CPP = [
 	'kmeans/vl_ikmeans.cpp',
 	'kmeans/vl_hikmeanspush.cpp',
 	'kmeans/vl_ikmeanspush.cpp',
+	'quickshift/vl_quickshift.cpp',
 	'py_vlfeat.cpp'
 	]
 

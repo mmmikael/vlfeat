@@ -1,5 +1,5 @@
 /*
- * vl_erfill_python.h
+ * py_vlfeat.h
  *
  *  Created on: Apr 30, 2009
  *      Author: Mikael Rousson

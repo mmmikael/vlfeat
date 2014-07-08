@@ -34,10 +34,10 @@ function [recall, precision, info] = vl_pr(y, scores)
 %  See also:: VL_ROC(), VL_HELP().
 
 % AUTORIGHTS
-% Copyright 2007 (c) Andrea Vedaldi and Brian Fulkerson
-% 
-% This file is part of VLFeat, available in the terms of the GNU
-% General Public License version 2.
+% Copyright (C) 2007-10 Andrea Vedaldi and Brian Fulkerson
+%
+% This file is part of VLFeat, available under the terms of the
+% GNU GPLv2, or (at your option) any later version.
 
 [scores, perm] = sort(scores, 'descend') ;
 y = y(perm) ;
@@ -63,11 +63,11 @@ end
 % compute auc according to PA08 challenge
 ap=0;
 for t=0:0.1:1
-  p=max(precision(recall>=t));
-  if isempty(p)
-    p=0;
+  p_=max(precision(recall>=t));
+  if isempty(p_)
+    p_=0;
   end
-  ap=ap+p/11;
+  ap=ap+p_/11;
 end
 
 info.auc      = auc ;
@@ -87,6 +87,6 @@ if nargout == 0
 	ylim([0 1]) ; ylabel('precision') ;
 	title(sprintf('precision-recall (AUC = %.2f %%)', info.auc * 100)) ;
 	legend('PR', 'random classifier', 'location', 'northwestoutside') ;
-  
+
   clear recall precision info ;
 end

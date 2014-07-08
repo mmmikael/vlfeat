@@ -1,70 +1,75 @@
 /** @internal
- ** @file     binsearch.c
+ ** @file     vl_binsearch.c
+ ** @brief    vl_binsearch - MEX definition
  ** @author   Andrea Vedaldi
- ** @brief    BINSEARCH - MEX
  **/
 
 /* AUTORIGHTS
-Copyright 2007 (c) Andrea Vedaldi and Brian Fulkerson
+Copyright (C) 2007-10 Andrea Vedaldi and Brian Fulkerson
 
-This file is part of VLFeat, available in the terms of the GNU
-General Public License version 2.
+This file is part of VLFeat, available under the terms of the
+GNU GPLv2, or (at your option) any later version.
 */
 
 #include <mexutils.h>
 
-/** @brief Driver.
- **
- ** @param nount number of output arguments.
- ** @param out output arguments.
- ** @param nin number of input arguments.
- ** @param in input arguments.
- **/
-void 
-mexFunction(int nout, mxArray *out[], 
+void
+mexFunction(int nout, mxArray *out[],
             int nin, const mxArray *in[])
 {
   enum { IN_B=0, IN_X, IN_END } ;
   enum { OUT_IDX=0 } ;
-  int NX, NB ;
+  vl_size numElementsX, numElementsB ;
   const double *X, *B ;
   double *IDX ;
-  
-  if( nin != 2 ) {
-    mexErrMsgTxt("Exactly two arguments are required.") ;
-  }
-  
-  if(! uIsPlainArray(in[IN_B]) ||
-     ! uIsPlainArray(in[IN_X])) {
-    mexErrMsgTxt("All arguments must be plain arrays.") ;
-  }
-    
-  NX = mxGetNumberOfElements(in[IN_X]) ;
-  NB = mxGetNumberOfElements(in[IN_B]) ;
 
-  out[OUT_IDX] = mxDuplicateArray(in[IN_X]) ;
-  IDX = mxGetPr(out[OUT_IDX]) ;
-  X = mxGetPr(in[IN_X]) ;
-  B = mxGetPr(in[IN_B]) ;
+  if (nout > 1) {
+    vlmxError(vlmxErrTooManyOutputArguments, NULL) ;
+  }
+  if (nin != 2) {
+    vlmxError(vlmxErrInvalidArgument,
+              "Incorrect number of arguments.") ;
+  }
+  if (! vlmxIsPlain (IN(B)) ||
+      ! vlmxIsPlain (IN(X)) ) {
+    vlmxError(vlmxErrInvalidArgument,
+              "All arguments must be plain arrays.") ;
+  }
+
+  numElementsX = mxGetNumberOfElements(IN(X)) ;
+  numElementsB = mxGetNumberOfElements(IN(B)) ;
 
   {
-    int i ;    
-    for (i = 0 ; i < NX ; ++i) {
+    mwSize const * dimensions = mxGetDimensions(IN(X)) ;
+    vl_size numDimensions = mxGetNumberOfDimensions(IN(X)) ;
+    OUT(IDX) = mxCreateNumericArray (numDimensions, dimensions, mxDOUBLE_CLASS, mxREAL) ;
+  }
+
+  /* if B is empty it defines only [-inf, +inf) */
+  if (numElementsB == 0) return ;
+
+  IDX = mxGetPr(OUT(IDX)) ;
+  X = mxGetPr(IN(X)) ;
+  B = mxGetPr(IN(B)) ;
+
+  {
+    vl_uindex i ;
+    for (i = 0 ; i < numElementsX ; ++i) {
       double x = X[i] ;
-      int blower = 0 ;
-      int bupper = NB - 1 ;
-      int bsplit ;
+      vl_uindex blower = 0 ;
+      vl_uindex bupper = numElementsB - 1 ;
+      vl_uindex bsplit ;
 
       if (x < B[0]) {
         IDX [i] = 0 ;
         continue ;
       }
 
-      if (x > B[NB-1]) {
-        IDX [i] = NB ;
+      if (x >= B[numElementsB - 1]) {
+        IDX [i] = numElementsB ;
         continue ;
       }
-      
+
       while (blower + 1 < bupper) {
         bsplit = (bupper + blower) / 2 ;
         if (x < B[bsplit]) bupper = bsplit ;
@@ -72,5 +77,5 @@ mexFunction(int nout, mxArray *out[],
       }
       IDX [i] = blower + 1 ;
     }
-  }  
+  }
 }

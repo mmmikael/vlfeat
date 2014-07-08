@@ -5,10 +5,10 @@
  **/
 
 /* AUTORIGHTS
-Copyright 2007 (c) Andrea Vedaldi and Brian Fulkerson
+Copyright (C) 2007-10 Andrea Vedaldi and Brian Fulkerson
 
-This file is part of VLFeat, available in the terms of the GNU
-General Public License version 2.
+This file is part of VLFeat, available under the terms of the
+GNU GPLv2, or (at your option) any later version.
 */
 
 #include "random.h"
@@ -100,12 +100,13 @@ vl_ikm_init_rand
 (VlIKMFilt* f, int M, int K)
 {
   int k, i ;
+  VlRand * rand = vl_get_rand() ;
 
   alloc (f, M, K) ;
   
   for (k = 0 ; k < K ; ++ k) {
     for (i = 0 ; i < M ; ++ i) {
-      f-> centers [k * M + i] = (vl_ikm_acc) (vl_rand_uint32 ()) ;
+      f-> centers [k * M + i] = (vl_ikm_acc) (vl_rand_uint32 (rand)) ;
     }
   }
   
@@ -126,6 +127,7 @@ vl_ikm_init_rand_data
 (VlIKMFilt* f, vl_uint8 const* data, int M, int N, int K)
 {
   int i, j, k ;
+  VlRand * rand = vl_get_rand () ;
   pair_t  *pairs = (pair_t *) vl_malloc (sizeof(pair_t) * N);
   
   alloc (f, M, K) ;
@@ -133,7 +135,7 @@ vl_ikm_init_rand_data
   /* permute the data randomly */
   for (j = 0 ; j < N ; ++j) {
     pairs[j].j = j ;
-    pairs[j].w = ((vl_int32) vl_rand_uint32 ()) >> 2 ;
+    pairs[j].w = ((vl_int32) vl_rand_uint32 (rand)) >> 2 ;
   }
   
   qsort (pairs, N, sizeof(pair_t), cmp_pair);
@@ -147,14 +149,14 @@ vl_ikm_init_rand_data
       for (prevk = 0 ; prevk < k ; ++ prevk) {
         vl_uint32 dist = calc_dist2
           (f-> centers + prevk * M, 
-           data + pairs[j].j * M, M) ;
+           data + (vl_uint64)pairs[j].j * M, M) ;
         if (dist == 0)  break ;       
       }
       if (prevk == k) break ;
     }
 
     for (i = 0 ; i < M ; ++ i) {
-      f-> centers [k * M + i] = data [pairs[j].j * M + i] ;
+      f-> centers [k * M + i] = data [(vl_uint64)pairs[j].j * M + i] ;
     }
 
     if (j < N - 1) ++ j ;

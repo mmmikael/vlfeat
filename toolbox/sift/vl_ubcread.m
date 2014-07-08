@@ -7,17 +7,19 @@ function [f,d] = vl_ubcread(file, varargin)
 %   VL_UBCREAD(FILE, 'FORMAT', 'OXFORD') assumes the format used by
 %   Oxford VGG implementations .
 %
-%   See also:: VL_SIFT(), VL_HELP().
+%   See also: VL_SIFT(), VL_HELP().
+
+% Authors: Andrea Vedaldi
 
 % AUTORIGHTS
-% Copyright 2007 (c) Andrea Vedaldi and Brian Fulkerson
-% 
-% This file is part of VLFeat, available in the terms of the GNU
-% General Public License version 2.
+% Copyright (C) 2007-10 Andrea Vedaldi and Brian Fulkerson
+%
+% This file is part of VLFeat, available under the terms of the
+% GNU GPLv2, or (at your option) any later version.
 
 opts.verbosity = 0 ;
-opts.format    = 'ubc' ;
-opts = vl_argparse(opts, varargin{:}) ;
+opts.format = 'ubc' ;
+opts = vl_argparse(opts, varargin) ;
 
 g = fopen(file, 'r');
 if g == -1

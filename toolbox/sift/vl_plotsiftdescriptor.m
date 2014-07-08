@@ -15,22 +15,22 @@ function h=vl_plotsiftdescriptor(d,f,varargin)
 %
 %   The function supports the following options
 %
-%   NumSpatialBins [4]::
+%   NumSpatialBins:: 4
 %     Number of spatial bins in each spatial direction.
 %
-%   NumOrientBins [8]::
+%   NumOrientBins:: 8
 %     Number of orientation bis.
 %
-%   Magnif [3.0]::
+%   Magnif:: 3
 %     Magnification factor.
 %
 %   See also VL_HELP(), VL_SIFT(), VL_PLOTFRAME().
 
 % AUTORIGHTS
-% Copyright 2007 (c) Andrea Vedaldi and Brian Fulkerson
-% 
-% This file is part of VLFeat, available in the terms of the GNU
-% General Public License version 2.
+% Copyright (C) 2007-10 Andrea Vedaldi and Brian Fulkerson
+%
+% This file is part of VLFeat, available under the terms of the
+% GNU GPLv2, or (at your option) any later version.
 
 magnif = 3.0 ;
 NBP    = 4 ;

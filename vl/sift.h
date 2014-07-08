@@ -2,12 +2,12 @@
  ** @brief    Scale Invariant Feature Transform (SIFT)
  ** @author   Andrea Vedaldi
  **/
- 
-/* AUTORIGHTS
-Copyright 2007 (c) Andrea Vedaldi and Brian Fulkerson
 
-This file is part of VLFeat, available in the terms of the GNU
-General Public License version 2.
+/* AUTORIGHTS
+Copyright (C) 2007-10 Andrea Vedaldi and Brian Fulkerson
+
+This file is part of VLFeat, available under the terms of the
+GNU GPLv2, or (at your option) any later version.
 */
 
 #ifndef VL_SIFT_H
@@ -29,14 +29,14 @@ typedef float vl_sift_pix ;
 typedef struct _VlSiftKeypoint
 {
   int o ;           /**< o coordinate (octave). */
-  
+
   int ix ;          /**< Integer unnormalized x coordinate. */
   int iy ;          /**< Integer unnormalized y coordinate. */
   int is ;          /**< Integer s coordinate. */
-  
+
   float x ;     /**< x coordinate. */
-  float y ;     /**< u coordinate. */
-  float s ;     /**< x coordinate. */
+  float y ;     /**< y coordinate. */
+  float s ;     /**< s coordinate. */
   float sigma ; /**< scale. */
 } VlSiftKeypoint ;
 
@@ -50,24 +50,28 @@ typedef struct _VlSiftFilt
 {
   double sigman ;       /**< nominal image smoothing. */
   double sigma0 ;       /**< smoothing of pyramid base. */
-  double sigmak ;       /**< k-smoothing */ 
+  double sigmak ;       /**< k-smoothing */
   double dsigma0 ;      /**< delta-smoothing. */
-  
+
   int width ;           /**< image width. */
   int height ;          /**< image height. */
-  int O ;               /**< number of octaves. */ 
+  int O ;               /**< number of octaves. */
   int S ;               /**< number of levels per octave. */
   int o_min ;           /**< minimum octave index. */
   int s_min ;           /**< minimum level index. */
   int s_max ;           /**< maximum level index. */
   int o_cur ;           /**< current octave. */
-  
+
   vl_sift_pix *temp ;   /**< temporary pixel buffer. */
   vl_sift_pix *octave ; /**< current GSS data. */
   vl_sift_pix *dog ;    /**< current DoG data. */
   int octave_width ;    /**< current octave width. */
   int octave_height ;   /**< current octave height. */
-  
+
+  vl_sift_pix *gaussFilter ;  /**< current Gaussian filter */
+  double gaussFilterSigma ;   /**< current Gaussian filter std */
+  vl_size gaussFilterWidth ;  /**< current Gaussian filter width */
+
   VlSiftKeypoint* keys ;/**< detected keypoints. */
   int nkeys ;           /**< number of detected keypoints. */
   int keys_res ;        /**< size of the keys buffer. */
@@ -99,7 +103,7 @@ void         vl_sift_delete (VlSiftFilt *f) ;
  **/
 
 VL_EXPORT
-int   vl_sift_process_first_octave       (VlSiftFilt *f, 
+int   vl_sift_process_first_octave       (VlSiftFilt *f,
                                           vl_sift_pix const *im) ;
 
 VL_EXPORT
@@ -109,7 +113,7 @@ VL_EXPORT
 void  vl_sift_detect                     (VlSiftFilt *f) ;
 
 VL_EXPORT
-int   vl_sift_calc_keypoint_orientations (VlSiftFilt *f, 
+int   vl_sift_calc_keypoint_orientations (VlSiftFilt *f,
                                           double angles [4],
                                           VlSiftKeypoint const*k);
 VL_EXPORT
@@ -123,12 +127,12 @@ void  vl_sift_calc_raw_descriptor        (VlSiftFilt const *f,
                                           vl_sift_pix const* image,
                                           vl_sift_pix *descr,
                                           int widht, int height,
-                                          double x, double y, 
+                                          double x, double y,
                                           double s, double angle0) ;
 
 VL_EXPORT
 void  vl_sift_keypoint_init              (VlSiftFilt const *f,
-                                          VlSiftKeypoint *k, 
+                                          VlSiftKeypoint *k,
                                           double x,
                                           double y,
                                           double sigma) ;
@@ -175,7 +179,7 @@ VL_INLINE void vl_sift_set_window_size (VlSiftFilt *f, double m) ;
  **/
 
 VL_INLINE int
-vl_sift_get_octave_index (VlSiftFilt const *f) 
+vl_sift_get_octave_index (VlSiftFilt const *f)
 {
   return f-> o_cur ;
 }
@@ -187,7 +191,7 @@ vl_sift_get_octave_index (VlSiftFilt const *f)
  **/
 
 VL_INLINE int
-vl_sift_get_noctaves (VlSiftFilt const *f) 
+vl_sift_get_noctaves (VlSiftFilt const *f)
 {
   return f-> O ;
 }
@@ -199,7 +203,7 @@ vl_sift_get_noctaves (VlSiftFilt const *f)
  **/
 
 VL_INLINE int
-vl_sift_get_octave_first (VlSiftFilt const *f) 
+vl_sift_get_octave_first (VlSiftFilt const *f)
 {
   return f-> o_min ;
 }
@@ -210,10 +214,10 @@ vl_sift_get_octave_first (VlSiftFilt const *f)
  ** @return current octave width.
  **/
 
-VL_INLINE int 
-vl_sift_get_octave_width (VlSiftFilt const *f) 
+VL_INLINE int
+vl_sift_get_octave_width (VlSiftFilt const *f)
 {
-  return f-> octave_width ; 
+  return f-> octave_width ;
 }
 
 /** ------------------------------------------------------------------
@@ -222,8 +226,8 @@ vl_sift_get_octave_width (VlSiftFilt const *f)
  ** @return current octave height.
  **/
 
-VL_INLINE int 
-vl_sift_get_octave_height (VlSiftFilt const *f) 
+VL_INLINE int
+vl_sift_get_octave_height (VlSiftFilt const *f)
 {
   return f-> octave_height ;
 }
@@ -241,10 +245,10 @@ vl_sift_get_octave_height (VlSiftFilt const *f)
  **/
 
 VL_INLINE vl_sift_pix *
-vl_sift_get_octave (VlSiftFilt const *f, int s) 
+vl_sift_get_octave (VlSiftFilt const *f, int s)
 {
   int w = vl_sift_get_octave_width  (f) ;
-  int h = vl_sift_get_octave_height (f) ;  
+  int h = vl_sift_get_octave_height (f) ;
   return f->octave + w * h * (s - f->s_min) ;
 }
 
@@ -255,7 +259,7 @@ vl_sift_get_octave (VlSiftFilt const *f, int s)
  **/
 
 VL_INLINE int
-vl_sift_get_nlevels (VlSiftFilt const *f) 
+vl_sift_get_nlevels (VlSiftFilt const *f)
 {
   return f-> S ;
 }
@@ -266,8 +270,8 @@ vl_sift_get_nlevels (VlSiftFilt const *f)
  ** @return number of keypoints.
  **/
 
-VL_INLINE int 
-vl_sift_get_nkeypoints (VlSiftFilt const *f) 
+VL_INLINE int
+vl_sift_get_nkeypoints (VlSiftFilt const *f)
 {
   return f-> nkeys ;
 }
@@ -279,7 +283,7 @@ vl_sift_get_nkeypoints (VlSiftFilt const *f)
  **/
 
 VL_INLINE VlSiftKeypoint const *
-vl_sift_get_keypoints (VlSiftFilt const *f) 
+vl_sift_get_keypoints (VlSiftFilt const *f)
 {
   return f-> keys ;
 }
@@ -303,7 +307,7 @@ vl_sift_get_peak_thresh (VlSiftFilt const *f)
  **/
 
 VL_INLINE double
-vl_sift_get_edge_thresh (VlSiftFilt const *f) 
+vl_sift_get_edge_thresh (VlSiftFilt const *f)
 {
   return f -> edge_thresh ;
 }
@@ -315,7 +319,7 @@ vl_sift_get_edge_thresh (VlSiftFilt const *f)
  **/
 
 VL_INLINE double
-vl_sift_get_norm_thresh (VlSiftFilt const *f) 
+vl_sift_get_norm_thresh (VlSiftFilt const *f)
 {
   return f -> norm_thresh ;
 }
@@ -327,7 +331,7 @@ vl_sift_get_norm_thresh (VlSiftFilt const *f)
  **/
 
 VL_INLINE double
-vl_sift_get_magnif (VlSiftFilt const *f) 
+vl_sift_get_magnif (VlSiftFilt const *f)
 {
   return f -> magnif ;
 }
@@ -339,7 +343,7 @@ vl_sift_get_magnif (VlSiftFilt const *f)
  **/
 
 VL_INLINE double
-vl_sift_get_window_size (VlSiftFilt const *f) 
+vl_sift_get_window_size (VlSiftFilt const *f)
 {
   return f -> windowSize ;
 }
@@ -353,7 +357,7 @@ vl_sift_get_window_size (VlSiftFilt const *f)
  **/
 
 VL_INLINE void
-vl_sift_set_peak_thresh (VlSiftFilt *f, double t) 
+vl_sift_set_peak_thresh (VlSiftFilt *f, double t)
 {
   f -> peak_thresh = t ;
 }
@@ -365,7 +369,7 @@ vl_sift_set_peak_thresh (VlSiftFilt *f, double t)
  **/
 
 VL_INLINE void
-vl_sift_set_edge_thresh (VlSiftFilt *f, double t) 
+vl_sift_set_edge_thresh (VlSiftFilt *f, double t)
 {
   f -> edge_thresh = t ;
 }
@@ -377,7 +381,7 @@ vl_sift_set_edge_thresh (VlSiftFilt *f, double t)
  **/
 
 VL_INLINE void
-vl_sift_set_norm_thresh (VlSiftFilt *f, double t) 
+vl_sift_set_norm_thresh (VlSiftFilt *f, double t)
 {
   f -> norm_thresh = t ;
 }
@@ -389,7 +393,7 @@ vl_sift_set_norm_thresh (VlSiftFilt *f, double t)
  **/
 
 VL_INLINE void
-vl_sift_set_magnif (VlSiftFilt *f, double m) 
+vl_sift_set_magnif (VlSiftFilt *f, double m)
 {
   f -> magnif = m ;
 }
@@ -397,11 +401,14 @@ vl_sift_set_magnif (VlSiftFilt *f, double m)
 /** ------------------------------------------------------------------
  ** @brief Set the Gaussian window size
  ** @param f SIFT filter.
- ** @param x Gaussian window size (in spatial bin units).
+ ** @param x Gaussian window size (in units of spatial bin).
+ **
+ ** This is the parameter @f$ \hat \sigma_{\text{win}} @f$ of
+ ** the standard SIFT descriptor @ref sift-tech-descriptor-std.
  **/
 
 VL_INLINE void
-vl_sift_set_window_size (VlSiftFilt *f, double x) 
+vl_sift_set_window_size (VlSiftFilt *f, double x)
 {
   f -> windowSize = x ;
 }

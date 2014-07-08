@@ -3,9 +3,17 @@ function vl_compile(useLcc)
 %   VL_COMPILE() uses MEX() to compile VLFeat MEX files. This command
 %   is needed moslty under Windows to re-build problematic binares.
 %
+%   By default VL_COMPILE() assumes that the MATLAB bundled compiler LCC
+%   is the active compiler. Use VL_COMPILE(FALSE) if Visual C++
+%   is the active compiler (see MEX -SETUP).
+%
 %   See also:: VL_HELP().
 
 % AUTORIGHTS
+% Copyright (C) 2007-10 Andrea Vedaldi and Brian Fulkerson
+%
+% This file is part of VLFeat, available under the terms of the
+% GNU GPLv2, or (at your option) any later version.
 
 if nargin < 1
   warning('Assuming the LCC compiler. Please use vl_compile(false) if you are using the Visual C compiler') ;
@@ -14,9 +22,9 @@ end
 
 vlDir      = vl_root ;
 toolboxDir = fullfile(vlDir, 'toolbox') ;
-mexw32Dir  = fullfile(toolboxDir,   'mexw32') ;
-binw32Dir  = fullfile(vlDir, 'bin', 'win32') ;
-impLibDir  = fullfile(binw32Dir, 'vl.lib') ;
+mexw32Dir  = fullfile(toolboxDir, 'mexw32') ;
+binw32Dir  = fullfile(vlDir, 'bin', 'w32') ;
+impLibPath = fullfile(binw32Dir, 'vl.lib') ;
 libDir     = fullfile(binw32Dir, 'vl.dll') ;
 
 mkd(mexw32Dir) ;
@@ -44,7 +52,6 @@ if useLcc
   lccImpLibPath = fullfile(lccImpLibDir, 'VL.lib') ;
   lccRoot       = fullfile(matlabroot, 'sys', 'lcc', 'bin') ;
   lccImpExePath = fullfile(lccRoot, 'lcc_implib.exe') ;
-  
   
   mkd(lccImpLibDir) ;
   cp(fullfile(binw32Dir, 'vl.dll'), fullfile(lccImpLibDir, 'vl.dll')) ;
@@ -112,7 +119,7 @@ end
 % --------------------------------------------------------------------
 function mkd(dst)
 % --------------------------------------------------------------------
-if ~exist(dst)
+if ~exist(dst, 'dir')
   fprintf('Creating directory ''%s''.', dst) ;
   mkdir(dst) ;
 end

@@ -27,28 +27,36 @@
 %
 %   VL_MSER(I,'Option'[,Value]...) accepts the following options
 %
-%   Delta [5]::
+%   Delta:: 5
 %       Set the DELTA parameter of the VL_MSER algorithm. Roughly
 %       speaking, the stability of a region is the relative variation
 %       of the region area when the intensity is changed of +/-
 %       Delta/2.
 %
-%   MaxArea [0.75]::
+%   MaxArea:: 0.75
 %       Set the maximum area (volume) of the regions relative to
 %       the image domain area (volume).
 %
-%   MinArea [3/npixels]::
+%   MinArea:: 3/npixels
 %       Set the minimum area (volume) of the regions relative to 
 %       the image domain area (volume).
 %
-%   MaxVariation [0.25]::
+%   MaxVariation:: 0.25
 %       Set the maximum variation (absolute stability score) of the
 %       regions.
 %
-%   MinDiversity [0.2]::
+%   MinDiversity:: 0.2
 %       Set the minimum diversity of the region. When the relative
 %       area variation of two nested regions is below this threshold,
 %       then only the most stable one is selected.
+%
+%   BrightOnDark:: 1
+%       Detect bright-on-dark MSERs. This corresponds to MSERs of the
+%       inverted image.
+%
+%   DarkOnBright:: 1
+%       Detect dark-on-bright MSERs. This corresponds to MSERs of the
+%       original image.
 %
 %   Verbose::
 %       Be verbose.
@@ -58,10 +66,10 @@
 %       baseline stereo from maximally stable extremal regions," in
 %       Proc. BMVC, 2002.
 %
-%   See also VL_HELP().
+%   See also: VL_HELP().
 
 % AUTORIGHTS
-% Copyright 2007 (c) Andrea Vedaldi and Brian Fulkerson
-% 
-% This file is part of VLFeat, available in the terms of the GNU
-% General Public License version 2.
+% Copyright (C) 2007-10 Andrea Vedaldi and Brian Fulkerson
+%
+% This file is part of VLFeat, available under the terms of the
+% GNU GPLv2, or (at your option) any later version.

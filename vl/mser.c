@@ -5,10 +5,10 @@
  **/
 
 /* AUTORIGHTS
-Copyright 2007 (c) Andrea Vedaldi and Brian Fulkerson
+Copyright (C) 2007-10 Andrea Vedaldi and Brian Fulkerson
 
-This file is part of VLFeat, available in the terms of the GNU
-General Public License version 2.
+This file is part of VLFeat, available under the terms of the
+GNU GPLv2, or (at your option) any later version.
 */
 
 /** @file mser.h
@@ -422,7 +422,7 @@ vl_mser_process (VlMserFilt* f, vl_mser_pix const* im)
 
     /* compute bucket size (how many pixels for each intensity
        value) */
-    for(i = 0 ; i < nel ; ++i) {
+    for(i = 0 ; i < (int) nel ; ++i) {
       vl_mser_pix v = im [i] ;
       ++ buckets [v] ;
     }
@@ -441,7 +441,7 @@ vl_mser_process (VlMserFilt* f, vl_mser_pix const* im)
   }
 
   /* initialize the forest with all void nodes */
-  for(i = 0 ; i < nel ; ++i) {
+  for(i = 0 ; i < (int) nel ; ++i) {
     r [i] .parent = VL_MSER_VOID_NODE ;
   }
 
@@ -460,7 +460,7 @@ vl_mser_process (VlMserFilt* f, vl_mser_pix const* im)
   */
   
   /* process each pixel by increasing intensity */
-  for(i = 0 ; i < nel ; ++i) {
+  for(i = 0 ; i < (int) nel ; ++i) {
     
     /* pop next node xi */
     vl_uint     idx = perm [i] ;  
@@ -631,7 +631,7 @@ vl_mser_process (VlMserFilt* f, vl_mser_pix const* im)
   ner = 0 ;
 
   /* scan all regions Xi */
-  for(i = 0 ; i < nel ; ++i) {
+  for(i = 0 ; i < (int) nel ; ++i) {
 
     /* pop next node xi */
     vl_uint     idx = perm [i] ;  
@@ -788,7 +788,7 @@ vl_mser_process (VlMserFilt* f, vl_mser_pix const* im)
         float div ;
         
         /* check all but the root mser */
-        if(parent != i) {
+        if((int) parent != i) {
           
           /* search for the maximally stable parent region */
           while(! er [parent] .max_stable) {

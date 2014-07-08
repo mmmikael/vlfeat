@@ -3,6 +3,13 @@
 ** description: Inverse rodrigues formula
 **/
 
+/* AUTORIGHTS
+Copyright (C) 2007-10 Andrea Vedaldi and Brian Fulkerson
+
+This file is part of VLFeat, available under the terms of the
+GNU GPLv2, or (at your option) any later version.
+*/
+
 #include <mexutils.h>
 
 #include <vl/rodrigues.h>
@@ -20,8 +27,8 @@ enum {
 **                                                              Driver
 ** ----------------------------------------------------------------- */
 
-void 
-mexFunction(int nout, mxArray *out[], 
+void
+mexFunction(int nout, mxArray *out[],
             int nin, const mxArray *in[])
 {
   int k,K ;
@@ -36,7 +43,7 @@ mexFunction(int nout, mxArray *out[],
     mexErrMsgTxt("Exactly one argument required.") ;
   }
 
-  if(!uIsRealMatrix(in[IN_R],-1,-1)) {
+  if(!vlmxIsMatrix(in[IN_R],-1,-1)) {
     mexErrMsgTxt("R must be a DOUBLE array") ;
   }
 
@@ -73,5 +80,5 @@ mexFunction(int nout, mxArray *out[],
     dom_pt += 3*9 ;
     R_pt   += 3*3 ;
   }
-  
+
 }

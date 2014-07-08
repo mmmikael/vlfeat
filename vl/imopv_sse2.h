@@ -4,15 +4,22 @@
  ** @brief    Vectorized image operations - SSE2
  **/
 
+/* AUTORIGHTS
+Copyright (C) 2007-10 Andrea Vedaldi and Brian Fulkerson
+
+This file is part of VLFeat, available under the terms of the
+GNU GPLv2, or (at your option) any later version.
+*/
+
 #ifndef VL_IMOPV_SSE2_H
 #define VL_IMOPV_SSE2_H
 
 #include "generic.h"
 
-#ifdef VL_SUPPORT_SSE2
+#ifndef VL_DISABLE_SSE2
 
 VL_EXPORT
-void _vl_imconvcol_vf_sse2 (float* dst, int dst_stride,                 
+void _vl_imconvcol_vf_sse2 (float* dst, int dst_stride,
                             float const* src,
                             int src_width, int src_height, int src_stride,
                             float const* filt, int filt_begin, int filt_end,

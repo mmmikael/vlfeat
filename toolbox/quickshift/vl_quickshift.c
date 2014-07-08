@@ -15,7 +15,7 @@ enum {
   opt_verbose
 } ;
 
-uMexOption options [] = {
+vlmxOption options [] = {
   {"Medoid",              0,   opt_medoid         },
   {"Verbose",             0,   opt_verbose        },
   {0,                     0,   0                  }
@@ -26,22 +26,22 @@ uMexOption options [] = {
  **/
 
 void
-mexFunction(int nout, mxArray *out[], 
+mexFunction(int nout, mxArray *out[],
             int nin, const mxArray *in[])
-{  
-  enum { 
-    IN_I=0,     /* Input image */    
+{
+  enum {
+    IN_I=0,     /* Input image */
     IN_KERNEL_SIZE,  /* The bandwidth parameter for density estimation */
     IN_MAX_DIST,     /* The maximum distance to a neighbor which increases
                    the density */
     IN_END
   } ;
-  enum {    
+  enum {
     OUT_PARENTS=0, /* parents (same size as I) */
     OUT_DISTS,     /* dists (same size as I) */
     OUT_DENSITY    /* density (same size as I) */
   } ;
-  
+
   int             verb = 0 ;
   int             opt ;
   int             next = IN_END ;
@@ -52,22 +52,24 @@ mexFunction(int nout, mxArray *out[],
   int *parentsi;
   double sigma ;
   double tau ;
-  
+
   int K,N1,N2;
 
   int medoid = 0 ;
 
   mwSize const *dims ;
   int ndims ;
-  
+
   int i;
 
   VlQS * q;
 
+  VL_USE_MATLAB_ENV ;
+
   /* -----------------------------------------------------------------
    *                                                   Check arguments
    * -------------------------------------------------------------- */
-  
+
   if (nin < 2) {
     mexErrMsgTxt("At least two arguments.") ;
   }
@@ -75,7 +77,7 @@ mexFunction(int nout, mxArray *out[],
   if (nout > 3) {
     mexErrMsgTxt("At most three output arguments.") ;
   }
-  
+
   ndims = mxGetNumberOfDimensions(in[IN_I]) ;
   dims  = mxGetDimensions(in[IN_I]) ;
 
@@ -90,14 +92,14 @@ mexFunction(int nout, mxArray *out[],
   N1 = dims [0] ;
   N2 = dims [1] ;
   K = (ndims == 3) ? dims [2] : 1 ;
-  
+
   I     =  mxGetPr (in[IN_I]) ;
   sigma = *mxGetPr (in[IN_KERNEL_SIZE]) ;
   tau   = 3*sigma;
   if (nin > 2)
     tau = *mxGetPr (in[IN_MAX_DIST]) ;
 
-  while ((opt = uNextOption(in, nin, options, &next, &optarg)) >= 0) {
+  while ((opt = vlmxNextOption (in, nin, options, &next, &optarg)) >= 0) {
     switch (opt) {
     case opt_medoid: /* Do medoid shift instead of mean shift */
       medoid = 1 ;
@@ -105,7 +107,7 @@ mexFunction(int nout, mxArray *out[],
     case opt_verbose :
       ++ verb ;
       break ;
-    }    
+    }
   } /* while opts */
 
   /* Create outputs */
@@ -117,7 +119,7 @@ mexFunction(int nout, mxArray *out[],
 
   out[OUT_DENSITY] = mxCreateDoubleMatrix(N1, N2, mxREAL) ;
   density          = mxGetPr (out[OUT_DENSITY]) ;
-  
+
   if (verb) {
     mexPrintf("quickshift: [N1,N2,K]: [%d,%d,%d]\n", N1,N2,K) ;
     mexPrintf("quickshift: type: %s\n", medoid ? "medoid" : "quick");
@@ -136,7 +138,7 @@ mexFunction(int nout, mxArray *out[],
 
   parentsi = vl_quickshift_get_parents(q);
   /* Copy results */
-  for(i = 0; i < N1*N2; i++) parents[i] = parentsi[i];
+  for(i = 0; i < N1*N2; i++) parents[i] = parentsi[i] + 1;
   memcpy(dists, vl_quickshift_get_dists(q), sizeof(double)*N1*N2);
   memcpy(density, vl_quickshift_get_density(q), sizeof(double)*N1*N2);
 

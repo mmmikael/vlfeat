@@ -45,7 +45,7 @@ kmeans/vl_ikmeanspush.cpp \
 quickshift/vl_quickshift.cpp \
 py_vlfeat.cpp
 
-CFLAGS += -I$(VLFEAT_DIR)/../  -I/usr/include/python2.6 -fPIC -msse2 -O2
+CFLAGS += -I$(VLFEAT_DIR)/../  -I/usr/include/python2.7 -fPIC -msse2 -O2
 LFLAGS += -msse -shared 
 
 OBJS_C=$(SOURCES_C:.c=.o)
@@ -74,6 +74,6 @@ clean:
 ##################################################
 
 $(LIBRARY): $(OBJS)
-	$(CXX) -o $@ $^ $(LFLAGS) -lboost_python-mt-py26
+	$(CXX) -o $@ $^ $(LFLAGS) -lboost_python-py27
 
 ##################################################

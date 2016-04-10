@@ -60,7 +60,7 @@ def vl_plotframe(frames, color='#00ff00', linewidth=2):
     # --------------------------------------------------------------------
 
     # if just a vector, make sure it is column
-    if pylab.min(frames.shape) == 1:
+    if min(frames.shape) == 1:
         frames = frames[:]
 
     [D, K] = frames.shape

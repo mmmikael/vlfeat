@@ -1,5 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
+import pylab
 import vlfeat
 from vlfeat.plotop.vl_plotframe import vl_plotframe
 # from vlfeat.kmeans.vl_hikmeanshist import vl_hikmeanshist
@@ -49,7 +49,7 @@ def plottree(tree, linewidth=2):
         i += 1
 
     for i in range(len(x1)):
-        plt.plot(x1[i], x2[i], '+-b', linewidth=linewidth)
+        pylab.plot(x1[i], x2[i], '+-b', linewidth=linewidth)
 
 
 def vl_test_hikmeans():
@@ -63,24 +63,24 @@ def vl_test_hikmeans():
     [tree, A] = vlfeat.vl_hikmeans(data, K, nleaves, verb=1)
     AT = vlfeat.vl_hikmeanspush(tree, datat)
 
-    plt.figure()
+    pylab.figure()
     plottree(tree)
-    plt.xlim(0, 255)
-    plt.ylim(0, 255)
+    pylab.xlim(0, 255)
+    pylab.ylim(0, 255)
     print('hikmeans-tree')
 
-    plt.figure()
+    pylab.figure()
     gen = color_gen()
     for k in range(K * K):
         color = gen.next()
-        sel = plt.find(A[-1, :] == k)
-        plt.plot(data[0, sel], data[1, sel], '.', color=color)
-        sel = plt.find(AT[-1, :] == k)
-        plt.plot(datat[0, sel], datat[1, sel], '+', color=color)
+        sel = pylab.find(A[-1, :] == k)
+        pylab.plot(data[0, sel], data[1, sel], '.', color=color)
+        sel = pylab.find(AT[-1, :] == k)
+        pylab.plot(datat[0, sel], datat[1, sel], '+', color=color)
 
     plottree(tree, linewidth=4)
-    plt.xlim(0, 255)
-    plt.ylim(0, 255)
+    pylab.xlim(0, 255)
+    pylab.ylim(0, 255)
     print('hikmeans-clusters')
 
 
@@ -98,19 +98,19 @@ def vl_test_hikmeans_io():
     # FIXME : Access to a protected member _vlfeat of a client class (protected-access)
     tree2.load('/tmp/test.vlhkm')
 
-    plt.figure()
+    pylab.figure()
     plottree(tree)
-    plt.xlim(0, 255)
-    plt.ylim(0, 255)
+    pylab.xlim(0, 255)
+    pylab.ylim(0, 255)
 
-    plt.figure()
+    pylab.figure()
     plottree(tree2)
-    plt.xlim(0, 255)
-    plt.ylim(0, 255)
+    pylab.xlim(0, 255)
+    pylab.ylim(0, 255)
     print('hikmeans-tree-io')
 
 
 if __name__ == '__main__':
     vl_test_hikmeans()
     vl_test_hikmeans_io()
-    plt.show()
+    pylab.show()
